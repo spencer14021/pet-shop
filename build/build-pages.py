@@ -39,7 +39,7 @@ MAPS = ("https://www.google.com/maps/search/?api=1&amp;"
         "query=Cl%C3%ADnica+Veterinaria+Doctor+Dobby%2C+Avenida+Nuestro+Padre+Jes%C3%BAs+Cautivo+15"
         "%2C+29640+Fuengirola%2C+M%C3%A1laga")
 IG = "https://www.instagram.com/dr.dobby_clinica_veterinaria/"
-FB = "https://www.facebook.com/Cl%C3%ADnica-Veterinaria-Doctor-Dobby-111464577287741/"
+FB = "https://www.facebook.com/people/Cl%C3%ADnica-Veterinaria-Doctor-Dobby/100063490931078/"
 WHATSAPP = "https://wa.me/34622653515"
 
 L = {}
