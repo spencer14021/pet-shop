@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dr. Dobby — Redesign</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;1,9..144,500&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --violet:#8b6db8;--violet-d:#6f52a0;--violet-dd:#523d7a;--violet-l:#a98fd0;
+    --peach:#eea87c;--peach-l:#f6c9a6;--peach-bg:#fbe9d8;
+    --ink:#1c1720;--muted:#6c6478;
+    --cream:#faf6f2;--cream-2:#fbe4d2;--paper:#fff;
+    --line:rgba(111,82,160,.14);
+    --disp:'Fraunces',Georgia,serif;--sans:'Nunito',-apple-system,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:var(--sans);background:var(--peach-bg);color:var(--ink);-webkit-font-smoothing:antialiased;line-height:1.6}
+  .frame{max-width:1180px;margin:22px auto;background:var(--paper);border-radius:20px;overflow:hidden;box-shadow:0 30px 90px -40px rgba(82,61,122,.55)}
+  .bbar{background:#ece5f0;height:40px;display:flex;align-items:center;gap:14px;padding:0 16px}
+  .bbar .d{display:flex;gap:7px}.bbar .d i{width:11px;height:11px;border-radius:50%}
+  .bbar .d i:nth-child(1){background:#ec6a5e}.bbar .d i:nth-child(2){background:#f4bf4f}.bbar .d i:nth-child(3){background:#61c554}
+  .bbar .u{flex:1;max-width:320px;background:#fff;border-radius:6px;height:23px;display:flex;align-items:center;padding:0 12px;font-size:12px;color:#8a8195}
+
+  .topbar{background:var(--cream);border-bottom:1px solid var(--line);display:flex;justify-content:flex-end;gap:34px;padding:12px 44px;font-size:13px;color:var(--muted);flex-wrap:wrap}
+  .topbar .ti{display:flex;align-items:flex-start;gap:9px;max-width:270px}
+  .topbar .ti .ic{color:var(--peach);font-size:15px;margin-top:1px}
+  .topbar .ti b{color:var(--violet-d);font-weight:700;display:block}
+
+  .nav{display:flex;align-items:center;justify-content:space-between;padding:18px 44px;background:var(--paper);position:relative;z-index:10}
+  .logo{display:flex;align-items:center;gap:12px}
+  .logo .paw{width:48px;height:48px;border-radius:50%;background:radial-gradient(circle at 42% 38%,var(--peach-l),var(--peach));display:flex;align-items:center;justify-content:center;box-shadow:0 6px 16px -6px rgba(238,168,124,.7);animation:bob 3.6s ease-in-out infinite;overflow:hidden}
+  .logo .paw span{font-size:27px;line-height:1;filter:grayscale(1) brightness(.15)}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+  .logo .lt{font-family:var(--disp);font-weight:700;font-size:23px;color:var(--violet-d);line-height:1}
+  .logo .lt small{display:block;font-family:var(--sans);font-weight:600;font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);margin-top:4px}
+  .menu{display:flex;align-items:center;gap:30px;font-weight:700;font-size:14px;letter-spacing:.02em;text-transform:uppercase}
+  .menu a{color:var(--ink);text-decoration:none;opacity:.82;transition:all .2s}
+  .menu a:hover{opacity:1;color:var(--violet-d)}
+  .nav-r{display:flex;align-items:center;gap:16px}
+  .lang{display:flex;gap:2px;font-size:12.5px;font-weight:700}
+  .lang span{padding:4px 8px;border-radius:7px;opacity:.5;cursor:pointer}
+  .lang span.on{opacity:1;background:var(--violet);color:#fff}
+  .soc{display:flex;gap:8px}
+  .soc i{width:30px;height:30px;border-radius:50%;background:var(--violet);color:#fff;display:flex;align-items:center;justify-content:center;font-style:normal;font-size:13px}
+
+  .hero{position:relative;padding:56px 44px 70px;overflow:hidden;background:
+    radial-gradient(125% 95% at 82% -5%,rgba(238,168,124,.42),transparent 58%),
+    radial-gradient(90% 80% at 0% 105%,rgba(238,168,124,.22),transparent 60%),
+    linear-gradient(180deg,var(--peach-bg),var(--cream) 70%)}
+  .hero-grid{display:grid;grid-template-columns:1fr .9fr;gap:44px;align-items:center;position:relative;z-index:2}
+  .hero h1{font-family:var(--disp);font-weight:600;font-size:54px;line-height:1.05;color:var(--peach);margin-bottom:24px;letter-spacing:-.01em}
+  .hero .accent{width:70px;height:5px;background:var(--violet);border-radius:3px;margin-bottom:26px}
+  .logo3d{position:relative;aspect-ratio:1.4;max-width:340px;border-radius:28px;background:linear-gradient(155deg,#fff,var(--peach-bg));display:flex;align-items:center;justify-content:center;box-shadow:0 30px 60px -34px rgba(82,61,122,.5);overflow:hidden;border:1px solid var(--line)}
+  .logo3d .disc{position:absolute;width:52%;aspect-ratio:1;border-radius:50%;background:radial-gradient(circle at 42% 38%,var(--peach-l),var(--peach));box-shadow:0 20px 50px -18px rgba(238,168,124,.8)}
+  .logo3d .dog{font-size:120px;position:relative;z-index:2;filter:grayscale(1) brightness(.12) drop-shadow(0 14px 20px rgba(0,0,0,.28));animation:float 4s ease-in-out infinite}
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-2deg)}50%{transform:translateY(-12px) rotate(2deg)}}
+  .logo3d .tag{position:absolute;bottom:12px;left:0;right:0;text-align:center;color:var(--muted);font-weight:700;font-size:11px;letter-spacing:.1em;text-transform:uppercase;z-index:3}
+  .ring{position:absolute;border-radius:50%;border:2px dashed rgba(139,109,184,.3);animation:spin 26s linear infinite}
+  .ring.r1{inset:14%}.ring.r2{inset:26%;animation-duration:18s;animation-direction:reverse;border-style:dotted;border-color:rgba(238,168,124,.55)}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .ccard{background:var(--paper);border-radius:22px;padding:30px;box-shadow:0 30px 70px -34px rgba(82,61,122,.55);border:1px solid var(--line)}
+  .ccard h3{font-family:var(--disp);font-weight:600;font-size:24px;color:var(--violet-dd);margin-bottom:18px}
+  .ccard input,.ccard textarea{width:100%;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--cream);font-family:var(--sans);font-size:15px;margin-bottom:12px}
+  .ccard textarea{min-height:84px;resize:none}
+  .ccard .chk{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--muted);margin:4px 0 16px}
+  .ccard .chk i{width:18px;height:18px;border:2px solid var(--violet);border-radius:5px;flex:none}
+  .ccard .chk a{color:var(--violet);font-weight:700}
+  .btn-v{background:var(--violet);color:#fff;font-weight:700;font-size:15px;padding:15px 30px;border-radius:999px;text-decoration:none;box-shadow:0 12px 26px -12px var(--violet-dd);transition:transform .2s;border:none;cursor:pointer;display:inline-block}
+  .btn-v:hover{transform:translateY(-2px)}
+  .ccard .btn-v{width:100%}
+
+  .marq{background:linear-gradient(90deg,var(--peach),#e79a68);color:#3a2417;font-weight:700;font-size:14px;padding:14px 0;overflow:hidden;white-space:nowrap}
+  .marq span{display:inline-block;padding:0 22px}
+  .marq b{color:var(--violet-dd)}
+
+  .sec{padding:66px 44px}
+  .sec.alt{background:linear-gradient(180deg,var(--cream),var(--peach-bg))}
+  .sec-h{margin-bottom:40px}
+  .sec-h h2{font-family:var(--disp);font-weight:600;font-size:38px;color:var(--violet-dd);display:inline-block}
+  .sec-h .accent{width:60px;height:5px;background:var(--peach);border-radius:3px;margin-top:12px}
+  .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .card{background:var(--paper);border:1px solid rgba(238,168,124,.3);border-radius:20px;padding:32px 26px;transition:transform .25s,box-shadow .25s;position:relative}
+  .card:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(82,61,122,.42)}
+  .card .no{font-family:var(--disp);font-weight:700;font-size:44px;color:rgba(139,109,184,.22);line-height:1}
+  .card .ic{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:26px;margin:-30px 0 16px auto;background:rgba(139,109,184,.13)}
+  .card:nth-child(2) .ic{background:rgba(238,168,124,.24)}
+  .card h3{font-family:var(--disp);font-weight:600;font-size:22px;color:var(--violet-dd);margin-bottom:10px}
+  .card p{color:var(--muted);font-size:14.5px}
+
+  /* installations */
+  .icards{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+  .icard{background:var(--paper);border:1px solid rgba(139,109,184,.16);border-radius:20px;padding:30px 26px;transition:transform .25s,box-shadow .25s}
+  .icard:hover{transform:translateY(-6px);box-shadow:0 26px 50px -30px rgba(82,61,122,.42)}
+  .icard .ic{width:54px;height:54px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:26px;margin-bottom:16px;background:rgba(139,109,184,.13)}
+  .icard:nth-child(2) .ic,.icard:nth-child(4) .ic{background:rgba(238,168,124,.24)}
+  .icard h3{font-family:var(--disp);font-weight:600;font-size:21px;color:var(--violet-dd);margin-bottom:10px}
+  .icard p{color:var(--muted);font-size:14px}
+
+  .band{margin:0 44px 66px;background:linear-gradient(135deg,var(--violet-l) 0%,var(--violet-d) 55%,#b9825a 130%);border-radius:28px;padding:54px;display:grid;grid-template-columns:1.2fr .8fr;gap:40px;align-items:center;position:relative;overflow:hidden}
+  .band::after{content:"🐾";position:absolute;right:-10px;bottom:-24px;font-size:180px;opacity:.1}
+  .band h2{font-family:var(--disp);font-weight:600;font-size:34px;color:#fff;margin-bottom:16px;position:relative;z-index:2}
+  .band p{color:rgba(255,255,255,.88);font-size:16px;margin-bottom:26px;position:relative;z-index:2}
+  .band .btn-peach{background:var(--peach);color:#3a2417;font-weight:800;padding:15px 32px;border-radius:999px;text-decoration:none;display:inline-block;position:relative;z-index:2;box-shadow:0 12px 26px -12px rgba(238,168,124,.9)}
+  .prev{display:flex;flex-direction:column;gap:14px;position:relative;z-index:2}
+  .prev .pv{background:rgba(255,255,255,.13);border-radius:14px;padding:15px 20px;color:#fff;font-weight:700;display:flex;align-items:center;gap:12px}
+  .prev .pv span{font-size:22px}
+
+  .cstrip{padding:0 44px 66px}
+  .cstrip-in{background:var(--cream-2);border-radius:28px;padding:46px 52px;display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+  .cstrip h2{font-family:var(--disp);font-weight:600;font-size:32px;color:var(--violet-dd);margin-bottom:20px}
+  .cstrip .row{display:flex;align-items:flex-start;gap:12px;margin-bottom:14px;font-weight:600;color:var(--violet-dd)}
+  .cstrip .row .b{width:40px;height:40px;border-radius:12px;background:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;flex:none}
+  .cstrip .row small{display:block;color:var(--muted);font-weight:600;font-size:13px}
+  .mapbox{border-radius:20px;overflow:hidden;min-height:260px;background:linear-gradient(135deg,#e8eef0,#dbe6ea);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;flex-direction:column;gap:8px;color:var(--muted)}
+  .mapbox .pin{font-size:40px}
+  .mapbox b{color:var(--violet-dd);font-weight:700}
+
+  footer{background:var(--violet-dd);border-top:5px solid var(--peach);color:rgba(255,255,255,.72);padding:46px 44px 30px}
+  .fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:34px;padding-bottom:28px;border-bottom:1px solid rgba(255,255,255,.14)}
+  .fbrand{font-family:var(--disp);font-weight:700;font-size:20px;color:#fff;margin-bottom:10px}
+  footer h4{color:#fff;font-size:12px;letter-spacing:.14em;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+  footer a{color:rgba(255,255,255,.72);text-decoration:none;display:block;margin-bottom:9px;font-size:14px}
+  footer a:hover{color:var(--peach-l)}
+  .fbot{padding-top:20px;font-size:12.5px;color:rgba(255,255,255,.5);text-align:center}
+
+  @media(max-width:880px){
+    .hero-grid,.band,.cstrip-in,.fgrid{grid-template-columns:1fr}
+    .logo3d{margin:0 auto 26px}
+    .cards,.icards{grid-template-columns:1fr}
+    .menu,.topbar .ti:nth-child(1){display:none}
+    .nav{flex-wrap:wrap;gap:12px}
+    .hero h1{font-size:40px}
+    .fgrid{grid-template-columns:1fr 1fr;gap:24px}
+  }
+  @media(max-width:540px){
+    .frame{margin:10px;border-radius:14px}
+    .topbar{padding:10px 20px;gap:16px;justify-content:center;text-align:center}
+    .nav,.hero,.sec,.cstrip{padding-left:20px;padding-right:20px}
+    .band{margin:0 16px 50px;padding:38px 26px}
+    .cstrip-in{padding:30px 22px}
+    .fgrid{grid-template-columns:1fr}
+    .hero h1{font-size:34px}.sec-h h2{font-size:29px}
+    .soc{display:none}
+  }
+</style>
+</head>
+<body>
+<div class="frame">
+  <div class="bbar"><div class="d"><i></i><i></i><i></i></div><div class="u">🔒 doctordobby.com</div></div>
+
+  <div class="topbar">
+    <div class="ti"><span class="ic">🕐</span><span><b>Monday to Friday 09:00 - 20:30</b>Saturdays 10:30 - 13:30</span></div>
+    <div class="ti"><span class="ic">📞</span><span><b>951 566 125</b>622 653 515<br>info@doctordobby.com</span></div>
+    <div class="ti"><span class="ic">📍</span><span>Avd. Nuestro Padre Jesús Cautivo 15 Edf. Nely, Local 2, Fuengirola</span></div>
+  </div>
+
+  <div class="nav">
+    <div class="logo">
+      <div class="paw"><span>🐕</span></div>
+      <div class="lt">Dr. Dobby<small>Clínica Veterinaria</small></div>
+    </div>
+    <div class="menu">
+      <a href="#">Services</a><a href="#installations">Installations</a><a href="#">Pet Shop</a><a href="#contact">Contact</a>
+    </div>
+    <div class="nav-r">
+      <div class="lang"><span class="on">EN</span><span>ES</span><span>RU</span></div>
+      <div class="soc"><i>◎</i><i>f</i></div>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-grid">
+      <div>
+        <h1>Veterinary Clinic in Fuengirola</h1>
+        <div class="accent"></div>
+        <div class="logo3d">
+          <div class="ring r1"></div><div class="ring r2"></div>
+          <div class="disc"></div>
+          <div class="dog">🐕</div>
+          <div class="tag">space for 3D logo model</div>
+        </div>
+      </div>
+      <div class="ccard">
+        <h3>Contact Dr. Dobby now</h3>
+        <input placeholder="Name">
+        <input placeholder="Email">
+        <input placeholder="Phone">
+        <textarea placeholder="Comments"></textarea>
+        <div class="chk"><i></i><span>I accept the <a href="#">Privacy Policy</a></span></div>
+        <button class="btn-v">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="marq">
+    <span>🩺 Veterinary Consultation</span><span>·</span><span><b>💉</b> Vaccination</span><span>·</span><span>📘 Passports</span><span>·</span><span><b>🔬</b> Microchips</span><span>·</span><span>🪱 Deworming</span><span>·</span><span><b>🏥</b> Surgery</span><span>·</span><span>🛒 Pet Shop</span><span>·</span><span>🩺 Veterinary Consultation</span>
+  </div>
+
+  <!-- SERVICES -->
+  <div class="sec">
+    <div class="sec-h"><h2>Services</h2><div class="accent"></div></div>
+    <div class="cards">
+      <div class="card">
+        <div class="no">01.</div><div class="ic">🩺</div>
+        <h3>Veterinary Consultation</h3>
+        <p>Our veterinarian will listen to you, examine your animal, conduct all necessary examinations and prescribe treatment based on the examination and answer all of your questions.</p>
+      </div>
+      <div class="card">
+        <div class="no">02.</div><div class="ic">🏥</div>
+        <h3>Surgery</h3>
+        <p>The surgeons of our veterinary clinic carry out various surgical interventions both the simplest and most common operations.</p>
+      </div>
+      <div class="card">
+        <div class="no">03.</div><div class="ic">🛒</div>
+        <h3>Pet Shop</h3>
+        <p>We have a wide range of special animal food products as well as snacks and treats for your best friend.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- PET SHOP BAND -->
+  <div class="band">
+    <div>
+      <h2>Pet Shop</h2>
+      <p>Food, Accessories, Animal Health. Our veterinarian will help you with the selection according to your pet diet and it's needs.</p>
+      <a href="#" class="btn-peach">Pet Shop</a>
+    </div>
+    <div class="prev">
+      <div class="pv"><span>🍖</span> Food</div>
+      <div class="pv"><span>🎾</span> Accessories</div>
+      <div class="pv"><span>❤️</span> Animal Health</div>
+    </div>
+  </div>
+
+  <!-- INSTALLATIONS -->
+  <div class="sec alt" id="installations">
+    <div class="sec-h"><h2>Installations</h2><div class="accent"></div></div>
+    <div class="icards">
+      <div class="icard"><div class="ic">⚕️</div><h3>Operating room</h3><p>Place for the intervention or procedure that requires general anesthesia. This room always remains in optimal aseptic conditions and has an Inhalation agents for anesthesia just like in human medicine. Throughout the surgical procedure, our patients are monitored, which allows us to control their vital signs.</p></div>
+      <div class="icard"><div class="ic">🧼</div><h3>Pre-operating room</h3><p>Where we carry out shaving and disinfection of pets before entering the operating room.</p></div>
+      <div class="icard"><div class="ic">🛏️</div><h3>Recovery room</h3><p>In addition, our clinic has a room for animals in a period of rehabilitation, for those that have undergone any kind of intervention or require hospitalization.</p></div>
+      <div class="icard"><div class="ic">🔬</div><h3>Laboratory</h3><p>At Dr. Dobby Veterinary Clinic we can perform hematologies, biochemistry, cytology, urinalysis, stool tests, and tests for many infectious diseases in both cats and dogs and exotic animals.</p></div>
+      <div class="icard"><div class="ic">📡</div><h3>Diagnostic imaging</h3><p>The imaging department also has an ultrasound and radiology equipment, where our veterinarians obtain dynamic images of organs and bones.</p></div>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="cstrip" id="contact">
+    <div class="cstrip-in">
+      <div>
+        <h2>Contact</h2>
+        <div class="row"><span class="b">📍</span><span>Avd. Nuestro Padre Jesús Cautivo 15<small>Edf. Nely, Local 2, 29640 Fuengirola, Málaga</small></span></div>
+        <div class="row"><span class="b">🕐</span><span>Monday to Friday 09:00 - 20:30<small>Saturdays 10:30 - 13:30</small></span></div>
+        <div class="row"><span class="b">📞</span><span>951 566 125 · 622 653 515<small>info@doctordobby.com</small></span></div>
+      </div>
+      <div class="mapbox">
+        <div class="pin">📍</div>
+        <b>Av. Nuestro Padre Jesús Cautivo, 15</b>
+        <span style="font-size:13px">29640 Fuengirola, Málaga</span>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <div class="fgrid">
+      <div>
+        <div class="fbrand">🐾 Dr. Dobby</div>
+        <p style="font-size:13.5px;line-height:1.7">Clínica Veterinaria · Fuengirola</p>
+      </div>
+      <div><h4>Services</h4><a href="#">Services</a><a href="#">Pet shop</a></div>
+      <div><h4>Clinic</h4><a href="#">Installations</a><a href="#">Contact</a></div>
+      <div><h4>Legal</h4><a href="#">Privacy Policy</a><a href="#">Cookies Policy</a><a href="#">Legal Notice</a></div>
+    </div>
+    <div class="fbot">© All rights reserved · Dr. Dobby · Fuengirola, España</div>
+  </footer>
+</div>
+</body>
+</html>

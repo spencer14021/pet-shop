@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dr. Dobby — Veterinary Clinic in Fuengirola</title>
+<meta name="description" content="Consultations, preventive medicine, surgery, diagnostics and a pet shop. Dr. Dobby Clínica Veterinaria, Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola.">
+<meta name="theme-color" content="#14101a">
+<link rel="alternate" hreflang="en" href="./">
+<link rel="alternate" hreflang="es" href="es/">
+<link rel="alternate" hreflang="ru" href="ru/">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/site.css">
+<script type="importmap">
+{
+  "imports": {
+    "three/webgpu": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.webgpu.min.js",
+    "three/tsl": "https://cdn.jsdelivr.net/npm/three@0.185.1/build/three.tsl.min.js"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "VeterinaryCare",
+  "name": "Dr. Dobby",
+  "url": "https://doctordobby.com/",
+  "telephone": "+34951566125",
+  "email": "info@doctordobby.com",
+  "address": {
+    "@type": "PostalAddress",
+    "streetAddress": "Avd. Nuestro Padre Jesús Cautivo 15, Edf. Nely, Local 2",
+    "addressLocality": "Fuengirola",
+    "addressRegion": "Málaga",
+    "postalCode": "29640",
+    "addressCountry": "ES"
+  },
+  "geo": { "@type": "GeoCoordinates", "latitude": 36.5516041, "longitude": -4.6190035 },
+  "openingHoursSpecification": [
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "20:30" },
+    { "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:30", "closes": "13:30" }
+  ],
+  "sameAs": ["https://www.instagram.com/dr.dobby_clinica_veterinaria/", "https://www.facebook.com/Cl%C3%ADnica-Veterinaria-Doctor-Dobby-111464577287741/"]
+}
+</script>
+</head>
+<body>
+
+<a class="skip" href="#main">Skip to content</a>
+<div class="progress" id="progress"></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="dobby" viewBox="0 0 100 89.43">
+    <path id="dobbyPath" d="M15.46,0.0 L15.07,1.96 L15.66,3.72 L13.89,3.33 L13.11,1.96 L12.33,2.15 L14.29,6.85 L13.89,8.61 L12.13,9.39 L11.15,10.57 L9.78,10.96 L8.22,12.92 L7.63,14.87 L6.07,16.24 L4.5,16.83 L4.31,17.42 L2.35,18.0 L0.39,19.96 L0.0,21.33 L2.35,23.29 L3.91,23.87 L7.63,23.68 L15.07,21.33 L15.85,21.33 L17.81,22.9 L19.37,35.23 L18.79,42.07 L19.77,49.51 L20.94,52.25 L23.68,56.16 L24.85,60.08 L25.05,63.99 L27.79,70.65 L28.77,83.76 L27.4,85.32 L25.44,85.71 L24.85,88.06 L25.83,89.43 L30.14,89.24 L32.09,88.26 L31.9,81.8 L33.66,79.84 L33.66,78.47 L32.88,77.5 L33.46,72.8 L32.68,70.84 L32.68,69.28 L34.44,68.69 L33.27,65.75 L33.27,60.08 L33.66,59.49 L34.25,58.9 L36.2,59.1 L41.68,58.12 L59.88,51.47 L63.01,51.27 L67.12,52.64 L72.21,57.34 L76.32,62.43 L81.41,66.54 L82.0,68.49 L84.54,68.69 L90.02,72.41 L91.19,73.78 L91.78,75.54 L92.56,76.13 L93.15,79.06 L94.13,80.63 L93.93,82.78 L91.98,84.54 L91.78,86.3 L93.74,87.28 L94.72,89.24 L98.24,89.43 L99.41,87.48 L100.0,85.71 L99.8,76.71 L99.02,74.76 L98.43,69.67 L93.15,66.34 L91.98,64.38 L89.63,62.43 L89.04,59.88 L87.28,59.3 L85.71,56.36 L84.54,51.86 L83.95,46.38 L80.04,40.7 L79.45,38.75 L80.04,35.81 L81.21,34.64 L82.0,32.88 L82.0,32.09 L81.21,31.12 L78.86,31.7 L78.28,33.07 L76.13,35.03 L69.47,35.42 L60.27,34.83 L51.47,33.46 L45.01,31.9 L38.16,29.35 L35.03,27.59 L32.68,25.05 L30.53,20.55 L29.94,20.16 L29.75,17.22 L28.77,17.03 L26.22,14.09 L23.87,12.52 L22.11,10.18 L20.55,6.46 L18.79,4.7 L17.81,2.35 L16.63,1.57 L16.44,0.39 L15.66,0.0Z"/>
+  </symbol>
+
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5.2l3.2 2"/></symbol>
+  <symbol id="i-phone" viewBox="0 0 24 24"><path d="M6.4 3.5h3.1l1.5 4-2 1.4a12 12 0 0 0 6.1 6.1l1.4-2 4 1.5v3.1a2 2 0 0 1-2.2 2A17 17 0 0 1 4.4 5.7a2 2 0 0 1 2-2.2Z"/></symbol>
+  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z"/><circle cx="12" cy="10" r="2.6"/></symbol>
+  <symbol id="i-mail" viewBox="0 0 24 24"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m3.9 7 8.1 6 8.1-6"/></symbol>
+  <symbol id="i-stethoscope" viewBox="0 0 24 24"><path d="M6 3v5a4.2 4.2 0 0 0 8.4 0V3"/><path d="M4.4 3h3.2M12.8 3H16"/><path d="M10.2 12.2v2.6a4.6 4.6 0 0 0 9.2 0v-1.9"/><circle cx="19.4" cy="10.6" r="2.2"/></symbol>
+  <symbol id="i-scissors" viewBox="0 0 24 24"><circle cx="6.5" cy="18" r="2.5"/><circle cx="17.5" cy="18" r="2.5"/><path d="M8.2 16.1 18 4M15.8 16.1 6 4"/></symbol>
+  <symbol id="i-lamp" viewBox="0 0 24 24"><path d="M4.6 9a7.4 7.4 0 0 1 14.8 0Z"/><path d="M12 9v8.5"/><path d="M8.4 20.5h7.2"/></symbol>
+  <symbol id="i-bed" viewBox="0 0 24 24"><path d="M3 20v-9"/><path d="M3 14.5h18V20"/><path d="M7.5 10.5h3.2a3 3 0 0 1 3 3v1"/><circle cx="7.2" cy="10.5" r=".2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9.6 3v6.2L4.8 17.9a2 2 0 0 0 1.7 3h11a2 2 0 0 0 1.7-3L14.4 9.2V3"/><path d="M8.2 3h7.6"/><path d="M7.2 15.4h9.6"/></symbol>
+  <symbol id="i-scan" viewBox="0 0 24 24"><circle cx="12" cy="12" r="2.1"/><path d="M8 8a5.7 5.7 0 0 0 0 8M16 16a5.7 5.7 0 0 0 0-8"/><path d="M5.1 5.1a9.8 9.8 0 0 0 0 13.8M18.9 18.9a9.8 9.8 0 0 0 0-13.8"/></symbol>
+  <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3.4 11h17.2a8.6 8.6 0 0 1-17.2 0Z"/><path d="M6.2 8.4C6.2 6.5 8.8 5 12 5s5.8 1.5 5.8 3.4"/></symbol>
+  <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M5.4 6.4a9.2 9.2 0 0 1 0 11.2M18.6 6.4a9.2 9.2 0 0 0 0 11.2"/></symbol>
+  <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4S4.3 15.5 4.3 10.5A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.7 2.9c0 5-7.7 9.9-7.7 9.9Z"/><path d="M6.6 12.6h2.6l1.5-2.4 2 4.2 1.3-1.8h3.4"/></symbol>
+  <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></symbol>
+  <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="16.9" cy="7.1" r=".9" fill="currentColor" stroke="none"/></symbol>
+  <symbol id="i-fb" viewBox="0 0 24 24"><path d="M14.5 8.5V6.9c0-.9.4-1.4 1.4-1.4h1.4V2.6h-2.6c-2.6 0-3.9 1.5-3.9 4v1.9H8.5v3h2.3V21h3.7v-9.5h2.5l.4-3z"/></symbol>
+</svg>
+
+<div class="util">
+  <div class="wrap util__in">
+    <div class="util__set">
+      <span class="util__i"><svg aria-hidden="true"><use href="#i-clock"/></svg><span><b>Mon–Fri 09:00–20:30</b></span></span>
+      <span class="util__i util__set--wide">Sat 10:30–13:30</span>
+    </div>
+    <div class="util__set">
+      <span class="util__i"><svg aria-hidden="true"><use href="#i-phone"/></svg><a href="tel:+34951566125"><b>951 566 125</b></a></span>
+      <span class="util__i util__set--wide"><a href="tel:+34622653515">622 653 515</a></span>
+      <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:info@doctordobby.com">info@doctordobby.com</a></span>
+      <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-pin"/></svg>Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola</span>
+    </div>
+  </div>
+</div>
+
+<header class="hdr" id="hdr">
+  <div class="wrap hdr__in">
+    <a class="brand" href="./">
+      <img class="brand__logo" src="assets/logo.png" width="371" height="156" alt="Dr. Dobby, clínica veterinaria">
+    </a>
+
+    <nav class="nav" id="nav" aria-label="Main">
+      <a href="services/">Services</a>
+      <a href="pet-shop/">Pet Shop</a>
+      <a href="installations/">Installations</a>
+      <a href="contact/">Contact</a>
+      <div class="nav__lang" aria-label="Language">
+        <a href="./" hreflang="en" aria-current="page">EN</a><a href="es/" hreflang="es">ES</a><a href="ru/" hreflang="ru">RU</a>
+      </div>
+    </nav>
+
+    <div class="hdr__end">
+      <div class="lang" aria-label="Language">
+        <a href="./" hreflang="en" aria-current="page">EN</a><a href="es/" hreflang="es">ES</a><a href="ru/" hreflang="ru">RU</a>
+      </div>
+      <a class="btn btn--v btn--sm btn--call" href="tel:+34951566125" aria-label="Call 951 566 125"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="btn__label">951 566 125</span></a>
+      <button class="burger" id="burger" aria-label="Menu" aria-controls="nav" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<main id="main">
+<section class="hero">
+  <div class="wrap hero__in">
+    <div class="hero__copy">
+      <p class="mono eyebrow" data-rise style="--d:80ms">Clínica Veterinaria · Fuengirola</p>
+      <h1>
+        <span class="l" data-rise style="--d:180ms"><span>Veterinary</span></span>
+        <span class="l" data-rise style="--d:280ms"><span>Clinic in</span></span>
+        <span class="l" data-rise style="--d:380ms"><span><em>Fuengirola</em></span></span>
+      </h1>
+      <p class="lede" data-rise style="--d:500ms">Consultations, preventive medicine, surgery, our own laboratory and imaging, and a pet shop — all in one clinic on Avenida Nuestro Padre Jesús Cautivo.</p>
+      <div class="hero__cta" data-rise style="--d:600ms">
+        <a class="btn btn--v" href="contact/">Book a visit</a>
+        <a class="btn btn--ghost" href="tel:+34951566125"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
+      </div>
+      <div class="status" data-rise style="--d:700ms">
+        <span class="dot" data-open aria-live="polite">Checking hours…</span>
+        <span><b>Mon–Fri</b> 09:00–20:30</span>
+        <span><b>Sat</b> 10:30–13:30</span>
+      </div>
+    </div>
+
+    <div class="stage" id="stage" data-rise style="--d:420ms">
+      <div class="stage__ring" aria-hidden="true"></div>
+      <div class="stage__disc" aria-hidden="true"></div>
+      <div class="stage__shadow" aria-hidden="true"></div>
+      <canvas class="stage__canvas" id="dobbyCanvas" aria-hidden="true"></canvas>
+      <div class="stage__flat" id="stageFlat">
+        <svg viewBox="0 0 100 89.43" role="img" aria-label="Dr. Dobby doberman logo mark"><use href="#dobby"/></svg>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <div class="ticker__set"><span>Veterinary consultation</span><i></i><span>Vaccination</span><i></i><span>Passports</span><i></i><span>Microchips</span><i></i><span>Deworming</span><i></i><span>Surgery</span><i></i><span>Diagnostic imaging</span><i></i><span>Laboratory research</span><i></i><span>Hospital</span><i></i><span>Dental care</span><i></i><span>Pet shop</span><i></i></div>
+    <div class="ticker__set"><span>Veterinary consultation</span><i></i><span>Vaccination</span><i></i><span>Passports</span><i></i><span>Microchips</span><i></i><span>Deworming</span><i></i><span>Surgery</span><i></i><span>Diagnostic imaging</span><i></i><span>Laboratory research</span><i></i><span>Hospital</span><i></i><span>Dental care</span><i></i><span>Pet shop</span><i></i></div>
+  </div>
+</div>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="sec__head" data-reveal>
+      <div>
+        <p class="mono eyebrow">What we do</p>
+        <h2>A full clinic,<br>not just a consultation</h2>
+      </div>
+      <p class="sec__note">Veterinary Consultations and Preventive medicine (Vaccination, Passports, Microchips, Deworming).</p>
+    </div>
+    <div class="teasers">
+      <a class="teaser" href="services/" data-reveal style="--d:40ms">
+        <span class="teaser__ic"><svg aria-hidden="true"><use href="#i-stethoscope"/></svg></span>
+        <h3>Veterinary Consultation</h3>
+        <p>Our veterinarian will listen to you, examine your animal, conduct all necessary examinations and prescribe treatment based on the examination and answer all of your questions.</p>
+        <span class="teaser__go">All services <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="teaser" href="services/" data-reveal style="--d:100ms">
+        <span class="teaser__ic"><svg aria-hidden="true"><use href="#i-lamp"/></svg></span>
+        <h3>Surgery</h3>
+        <p>The surgeons of our veterinary clinic carry out various surgical interventions both the simplest and most common operations.</p>
+        <span class="teaser__go">All services <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+      <a class="teaser" href="pet-shop/" data-reveal style="--d:160ms">
+        <span class="teaser__ic"><svg aria-hidden="true"><use href="#i-bowl"/></svg></span>
+        <h3>Pet Shop</h3>
+        <p>Food, Accessories, Animal Health. Our veterinarian will help you with the selection according to your pet diet and it’s needs.</p>
+        <span class="teaser__go">Visit the shop <svg aria-hidden="true"><use href="#i-arrow"/></svg></span>
+      </a>
+    </div>
+    <div class="sec__more" data-reveal>
+      <a class="btn btn--ghost" href="services/">See all 10 services <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--sand">
+  <div class="wrap">
+    <div class="shop" data-reveal>
+      <svg class="shop__dog" viewBox="0 0 100 89.43" aria-hidden="true"><use href="#dobby"/></svg>
+      <div>
+        <p class="mono eyebrow">Pet shop</p>
+        <h2>Food, accessories,<br>animal health</h2>
+        <p class="shop__lede">Our veterinarian will help you with the selection according to your pet diet and it’s needs.</p>
+        <div class="shop__cta"><a class="btn btn--peach" href="pet-shop/">Visit the pet shop</a></div>
+      </div>
+      <div class="shop__list">
+        
+        <div class="shop__item">
+          <svg aria-hidden="true"><use href="#i-bowl"/></svg>
+          <div><h3>Food</h3><p>We have a wide range of special animal food products as well as snacks and treats for your best friend.</p></div>
+        </div>
+        <div class="shop__item">
+          <svg aria-hidden="true"><use href="#i-ball"/></svg>
+          <div><h3>Accessories</h3><p>It is important to play with your little friends in order to maintain its’s psychical activity and mental health. We have a wide selection of toys, accessories and other forms of leisure for animals.</p></div>
+        </div>
+        <div class="shop__item">
+          <svg aria-hidden="true"><use href="#i-heart"/></svg>
+          <div><h3>Animal Health</h3><p>Products for oral hygiene, different types of antiparasitic and preventive medicine. Prevention is the best remedy to avoid animal diseases!</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec">
+  <div class="wrap">
+    <div class="split" data-reveal>
+      <div>
+        <p class="mono eyebrow">Installations</p>
+        <h2>Five rooms behind<br>the consulting room</h2>
+      </div>
+      <div>
+        <p class="sec__note">From preparation through surgery to recovery — plus our own laboratory and imaging department, so most results come back the same day.</p>
+        <div class="rooms">
+          <span><svg aria-hidden="true"><use href="#i-scissors"/></svg>Pre-operating room</span>
+        <span><svg aria-hidden="true"><use href="#i-lamp"/></svg>Operating room</span>
+        <span><svg aria-hidden="true"><use href="#i-bed"/></svg>Recovery room</span>
+        <span><svg aria-hidden="true"><use href="#i-flask"/></svg>Laboratory</span>
+        <span><svg aria-hidden="true"><use href="#i-scan"/></svg>Diagnostic imaging</span>
+        </div>
+        <div class="sec__more">
+          <a class="btn btn--ghost" href="installations/">See the installations <svg aria-hidden="true"><use href="#i-arrow"/></svg></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sec sec--sand">
+  <div class="wrap">
+    <div class="cstrip" data-reveal>
+      <div>
+        <p class="mono eyebrow">Contact</p>
+        <h2>Come in, or<br>call us first</h2>
+        <p class="sec__note" style="margin-top:14px">Walk-ins are welcome during opening hours. For surgery, dental work and any procedure under anesthesia, please book ahead.</p>
+        <div class="cstrip__facts">
+          <div><svg aria-hidden="true"><use href="#i-pin"/></svg><span><b>Avd. Nuestro Padre Jesús Cautivo 15</b><span>Edf. Nely, Local 2, 29640 Fuengirola, Málaga</span></span></div>
+          <div><svg aria-hidden="true"><use href="#i-clock"/></svg><span><b>Monday to Friday 09:00 – 20:30</b><span>Saturdays 10:30 – 13:30 · Sunday closed</span></span></div>
+          <div><svg aria-hidden="true"><use href="#i-phone"/></svg><span><b><a href="tel:+34951566125">951 566 125</a></b><span>Call during opening hours</span></span></div>
+        </div>
+      </div>
+      <div class="cstrip__cta">
+        <a class="btn btn--v" href="contact/">Contact page</a>
+        <a class="btn btn--ghost" href="tel:+34951566125"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div>
+      <div class="foot__brand">
+        <img class="brand__logo" src="assets/logo.png" width="371" height="156" alt="Dr. Dobby, clínica veterinaria">
+      </div>
+      <p>Dr. Dobby Veterinary Clinic in Fuengirola. Avd. Nuestro Padre Jesús Cautivo 15, Edf. Nely, Local 2.</p>
+    </div>
+    <div>
+      <h4>Services</h4>
+      <a href="services/">Services</a>
+      <a href="pet-shop/">Pet shop</a>
+    </div>
+    <div>
+      <h4>Clinic</h4>
+      <a href="installations/">Installations</a>
+      <a href="contact/">Contact</a>
+    </div>
+    <div>
+      <h4>Legal</h4>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Cookies Policy</a>
+      <a href="#">Legal Notice</a>
+    </div>
+  </div>
+  <div class="wrap foot__bot">
+    <span>© All rights reserved · Dr. Dobby · Fuengirola, España</span>
+    <div class="soc">
+      <a href="https://www.instagram.com/dr.dobby_clinica_veterinaria/" target="_blank" rel="noopener" aria-label="Instagram"><svg aria-hidden="true"><use href="#i-ig"/></svg></a>
+      <a href="https://www.facebook.com/Cl%C3%ADnica-Veterinaria-Doctor-Dobby-111464577287741/" target="_blank" rel="noopener" aria-label="Facebook"><svg aria-hidden="true"><use href="#i-fb"/></svg></a>
+    </div>
+  </div>
+</footer>
+
+<script src="assets/site.js"></script>
+</body>
+</html>
