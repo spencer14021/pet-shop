@@ -59,6 +59,7 @@ L["en"] = {
         hoursRow="Monday to Friday 09:00 – 20:30",
         hoursRowSub="Saturdays 10:30 – 13:30 · Sunday closed",
         phoneSub="Call during opening hours", mailSub="We reply within one working day",
+        waSub="Message us — appointments and quick questions",
         footBrandText="Dr. Dobby Veterinary Clinic in Fuengirola. Avd. Nuestro Padre Jesús Cautivo 15, Edf. Nely, Local 2.",
         footCols=[("Services", [("services", "Services"), ("petshop", "Pet shop")]),
                   ("Clinic", [("installations", "Installations"), ("contact", "Contact")])],
@@ -202,6 +203,7 @@ L["es"] = {
         hoursRow="Lunes a Viernes 09:00 – 20:30",
         hoursRowSub="Sábados 10:30 – 13:30 · Domingo cerrado",
         phoneSub="Llámanos dentro del horario", mailSub="Respondemos en un día laborable",
+        waSub="Escríbenos — citas y consultas rápidas",
         footBrandText="Clínica Veterinaria Dr. Dobby en Fuengirola. Avd. Nuestro Padre Jesús Cautivo 15, Edf. Nely, Local 2.",
         footCols=[("Servicios", [("services", "Servicios"), ("petshop", "Tienda mascota")]),
                   ("La Clínica", [("installations", "Instalaciones"), ("contact", "Contacto")])],
@@ -346,6 +348,7 @@ L["ru"] = {
         hoursRow="С понедельника по пятницу 09:00 – 20:30",
         hoursRowSub="Суббота 10:30 – 13:30 · Воскресенье выходной",
         phoneSub="Звоните в рабочие часы", mailSub="Отвечаем в течение рабочего дня",
+        waSub="Напишите нам — запись и короткие вопросы",
         footBrandText="Ветеринарная клиника Dr. Dobby в Фуэнхироле. Avd. Nuestro Padre Jesús Cautivo 15, Edf. Nely, Local 2.",
         footCols=[("Сервисы", [("services", "Сервисы"), ("petshop", "Зоомагазин")]),
                   ("Клиника", [("installations", "Инфраструктура"), ("contact", "Контакты")])],
@@ -521,7 +524,7 @@ def chrome(lang, key):
     </div>
     <div class="util__set">
       <span class="util__i"><svg aria-hidden="true"><use href="#i-phone"/></svg><a href="tel:+34951566125"><b>951 566 125</b></a></span>
-      <span class="util__i util__set--wide"><a href="tel:+34622653515">622 653 515</a></span>
+      <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-wa"/></svg><a href="{WHATSAPP}" target="_blank" rel="noopener">WhatsApp 622 653 515</a></span>
       <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:info@doctordobby.com">info@doctordobby.com</a></span>
       <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-pin"/></svg>{c["addressLine"]}</span>
     </div>
@@ -847,7 +850,11 @@ def body_contact(lang):
           </div>
           <div class="info__row">
             <svg aria-hidden="true"><use href="#i-phone"/></svg>
-            <div><b><a href="tel:+34951566125">951 566 125</a> · <a href="tel:+34622653515">622 653 515</a></b><span>{c["phoneSub"]}</span></div>
+            <div><b><a href="tel:+34951566125">951 566 125</a></b><span>{c["phoneSub"]}</span></div>
+          </div>
+          <div class="info__row">
+            <svg aria-hidden="true"><use href="#i-wa"/></svg>
+            <div><b><a href="{WHATSAPP}" target="_blank" rel="noopener">WhatsApp 622 653 515</a></b><span>{c["waSub"]}</span></div>
           </div>
           <div class="info__row">
             <svg aria-hidden="true"><use href="#i-mail"/></svg>
