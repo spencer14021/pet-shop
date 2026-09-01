@@ -147,5 +147,19 @@ Don't put a photo in the hero: the 3D mark is the hero.
   Point it at a mail endpoint (Formspree, a PHP handler, whatever the host offers).
   It lives on `contact/` only, in all three languages.
 - Privacy Policy / Cookies Policy / Legal Notice link to `#` everywhere.
-- The map is a styled placeholder with a real "Open in Maps" link, so the page loads
-  no Google scripts and needs no cookie banner. Swap for an embed if the client wants one.
+## The map
+
+`contact/` carries a real slippy map — streets, buildings, house numbers — drawn with
+**Leaflet 1.9.4** over standard **OpenStreetMap** tiles. No API key and no cookies, so the
+page still needs no consent banner; Leaflet's own flagged attribution prefix is cleared and
+the required OSM credit stays. It loads from cdnjs only when the block comes near the
+viewport, and if that fails the flat sketch underneath simply stays — the block is never
+empty. Wheel-zoom is off until you click into the map, so the page keeps its own scroll.
+
+The marker is **the logo**, not a generic pin: the peach disc with its violet ring and the
+doberman inside it, on a violet tail so it still points at the door.
+
+Coordinates live in `GEO` in `build-pages.py` — `36.552841, -4.6163597`, the clinic's own
+Google listing, cross-checked against an OSM geocode of the street. **Note the `pb=` embed
+still on doctordobby.com predates that listing and sits about 250 m west of the real door**,
+so it is deliberately not the source.

@@ -117,6 +117,66 @@
   });
 
   /* ============================================================
+     CONTACT MAP
+     Real tiles — streets, buildings, house numbers — from OpenStreetMap
+     via CARTO's Voyager style, drawn with Leaflet. No API key, no cookies,
+     so the page still needs no consent banner. Loaded only when the block
+     is near the viewport; if the CDN is down the flat sketch simply stays.
+     The marker is the Dr. Dobby logo mark, not a generic pin.
+     ============================================================ */
+  const mapEl = document.getElementById('map');
+  if (mapEl) {
+    const CDN = 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/';
+    let asked = false;
+
+    const load = () => {
+      if (asked) return;
+      asked = true;
+      const css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = CDN + 'leaflet.min.css';
+      document.head.appendChild(css);
+      const js = document.createElement('script');
+      js.src = CDN + 'leaflet.min.js';
+      js.onload = draw;
+      document.head.appendChild(js);   // on error the sketch stays — nothing to undo
+    };
+
+    new IntersectionObserver((en, obs) => {
+      if (en[0].isIntersecting) { obs.disconnect(); load(); }
+    }, { rootMargin: '400px' }).observe(mapEl);
+
+    function draw() {
+      const at = [+mapEl.dataset.lat, +mapEl.dataset.lng];
+      const mark = mapEl.querySelector('.map__mark');
+      const icon = mark ? mark.outerHTML : '';
+      mapEl.innerHTML = '';
+      mapEl.classList.add('is-live');
+
+      const map = L.map(mapEl, {
+        center: at, zoom: 17,
+        scrollWheelZoom: false,          // the page keeps its own scroll until you click in
+        fadeAnimation: !reduce, zoomAnimation: !reduce
+      });
+      map.attributionControl.setPrefix('');   // drops Leaflet's own flagged prefix
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+      }).addTo(map);
+
+      L.marker(at, {
+        title: mapEl.dataset.label || '',
+        icon: L.divIcon({ className: 'map__icon', html: icon, iconSize: [46, 56], iconAnchor: [23, 56] })
+      }).addTo(map);
+
+      map.once('click', () => map.scrollWheelZoom.enable());
+      // the block sits inside a reveal transition — re-measure once it has settled
+      setTimeout(() => map.invalidateSize(), 400);
+    }
+  }
+
+  /* ============================================================
      3D LOGO
      The doberman is inflated from the logo's own outline: a signed
      distance field turns the flat silhouette into a rounded body,

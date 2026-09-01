@@ -34,7 +34,10 @@ FONTS = {
 # Address, coordinates and the two social URLs are the live ones; the map link is
 # name-anchored so phones hand it to the Maps app instead of the browser.
 ADDRESS = "Avd. Nuestro Padre Jes\u00fas Cautivo 15, Edf. Nely, Local 2, 29640 Fuengirola, M\u00e1laga"
-GEO = ("36.5516041", "-4.6190035")
+# The clinic's own Google listing, cross-checked against an OSM geocode of the
+# street. The pb= embed still on doctordobby.com predates the listing and sits
+# ~250 m west of the door, so it is deliberately not the source here.
+GEO = ("36.552841", "-4.6163597")
 MAPS = ("https://www.google.com/maps/search/?api=1&amp;"
         "query=Cl%C3%ADnica+Veterinaria+Doctor+Dobby%2C+Avenida+Nuestro+Padre+Jes%C3%BAs+Cautivo+15"
         "%2C+29640+Fuengirola%2C+M%C3%A1laga")
@@ -876,8 +879,8 @@ def body_contact(lang):
         <p class="status" style="margin-top:22px"><span class="dot" data-open aria-live="polite">{c["checking"]}</span></p>
 
         <div class="map">
-          <div class="map__vis" aria-hidden="true">
-            <div class="map__pin"><svg aria-hidden="true"><use href="#i-pin"/></svg></div>
+          <div class="map__vis" id="map" data-lat="{GEO[0]}" data-lng="{GEO[1]}" data-label="{d["mapName"]}">
+            <div class="map__mark" aria-hidden="true"><i class="map__disc"></i><svg viewBox="0 0 100 89.43"><use href="#dobby"/></svg></div>
           </div>
           <div class="map__bar">
             <div><b>{d["mapName"]}</b><span>{d["mapAddr"]}</span></div>
