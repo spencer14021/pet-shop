@@ -160,7 +160,7 @@ h1 em{font-style:normal;color:var(--violet-700)}
 
 /* -- the stage: peach disc from the logo + extruded 3D doberman -- */
 .stage{position:relative;width:min(100%,560px);aspect-ratio:1/1;margin-inline:auto}
-.stage__disc{position:absolute;inset:9% 6% 15% 10%;border-radius:50%;
+.stage__disc{position:absolute;inset:9% 12% 15% 12%;border-radius:50%;
   /* the violet ring the logo draws around its peach disc */
   background:radial-gradient(circle closest-side at 50% 50%,transparent 0 85.5%,var(--violet) 85.5% 90%,transparent 90.5%),
   radial-gradient(circle at 36% 30%,#ffdfc2,var(--peach) 66%,#eb9d64);
