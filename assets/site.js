@@ -177,11 +177,11 @@
   }
 
   /* ============================================================
-     AMBIENT LIGHT
-     Two slow clouds on the ground, and a small warm pool that trails
-     the pointer. Both are painted by CSS; this puts them on the page
-     and eases the pool along, so the light lags the cursor a little
-     instead of snapping to it.
+     THE GROUND
+     Two slow clouds, a scatter of logo discs down the empty margins,
+     and a warm pool that trails the pointer. All three are painted by
+     CSS; this puts them on the page and eases the pool along, so the
+     light lags the cursor a little instead of snapping to it.
      ============================================================ */
   {
     const drift = document.createElement('div');
@@ -189,87 +189,69 @@
     drift.setAttribute('aria-hidden', 'true');
     drift.append(document.createElement('i'), document.createElement('i'));
     document.body.appendChild(drift);
-  }
 
-  /* ============================================================
-     THE PLATES
-     Drop the logo's doberman into every icon plate, so the circle has
-     something to turn into on hover. One <use> per plate: the path is
-     already in the sprite, this only points at it.
-     ============================================================ */
-  if (document.getElementById('dobbyPath')) {
-    for (const plate of document.querySelectorAll('.teaser__ic, .pcard__ic')) {
-      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      svg.setAttribute('class', 'ic-dog');
-      svg.setAttribute('viewBox', '0 0 100 89.43');
-      svg.setAttribute('aria-hidden', 'true');
-      const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
-      use.setAttribute('href', '#dobbyPath');
-      svg.appendChild(use);
-      plate.appendChild(svg);
+    if (document.getElementById('dobbyPath')) {
+      const dots = document.createElement('div');
+      dots.className = 'bgdots';
+      dots.setAttribute('aria-hidden', 'true');
+      for (let i = 0; i < 6; i++) {
+        const dot = document.createElement('b');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('viewBox', '0 0 100 89.43');
+        const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+        use.setAttribute('href', '#dobbyPath');
+        svg.appendChild(use);
+        dot.appendChild(svg);
+        dots.appendChild(dot);
+      }
+      document.body.appendChild(dots);
+
+      /* the discs drift on their own clocks; this only slides them past
+         the page as it scrolls, each at its own fraction, so the margins
+         have depth instead of a fixed pattern stuck to the glass */
+      if (!reduce) {
+        const root = document.documentElement;
+        let pending = false;
+        const sync = () => { pending = false; root.style.setProperty('--sy', String(Math.round(scrollY))); };
+        sync();
+        addEventListener('scroll', () => {
+          if (pending) return;
+          pending = true;
+          requestAnimationFrame(sync);
+        }, { passive: true });
+      }
     }
   }
 
-  /* ============================================================
-     POINTER
-     A dot on the real position, a ring easing along behind it, and the
-     ring swelling over anything clickable. The native arrow is hidden
-     only after both are on screen and following: if this block throws,
-     or never runs, the visitor still has a pointer.
-     ============================================================ */
   if (!reduce && matchMedia('(hover:hover) and (pointer:fine)').matches) {
     const root = document.documentElement;
-    const mk = cls => {
-      const el = document.createElement('div');
-      el.className = cls;
-      el.setAttribute('aria-hidden', 'true');
-      document.body.appendChild(el);
-      return el;
+    const glow = document.createElement('div');
+    glow.className = 'cglow';
+    glow.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(glow);
+
+    let tx = innerWidth / 2, ty = innerHeight / 2, x = tx, y = ty, raf = 0, seen = false;
+
+    const place = () => {
+      root.style.setProperty('--gx', x.toFixed(1) + 'px');
+      root.style.setProperty('--gy', y.toFixed(1) + 'px');
     };
-    const ring = mk('dcur'), dot = mk('dcur-dot'), glow = mk('cglow');
-    const HOT = 'a,button,input,textarea,select,summary,label,[role="button"],[tabindex]';
-
-    let tx = innerWidth / 2, ty = innerHeight / 2;   // the pointer, now
-    let rx = tx, ry = ty;                            // the ring, catching up
-    let gx = tx, gy = ty;                            // the warm pool, slower still
-    let raf = 0, seen = false;
-
-    const paint = () => {
-      root.style.setProperty('--dx', tx + 'px');
-      root.style.setProperty('--dy', ty + 'px');
-      root.style.setProperty('--rx', rx.toFixed(1) + 'px');
-      root.style.setProperty('--ry', ry.toFixed(1) + 'px');
-      root.style.setProperty('--gx', gx.toFixed(1) + 'px');
-      root.style.setProperty('--gy', gy.toFixed(1) + 'px');
-    };
-
     const tick = () => {
-      rx += (tx - rx) * 0.22; ry += (ty - ry) * 0.22;
-      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;
-      paint();
-      const moving = Math.abs(tx - rx) > 0.3 || Math.abs(ty - ry) > 0.3 ||
-                     Math.abs(tx - gx) > 0.3 || Math.abs(ty - gy) > 0.3;
-      raf = moving ? requestAnimationFrame(tick) : 0;
+      x += (tx - x) * 0.14;
+      y += (ty - y) * 0.14;
+      place();
+      raf = (Math.abs(tx - x) > 0.4 || Math.abs(ty - y) > 0.4) ? requestAnimationFrame(tick) : 0;
     };
-
-    const show = on => [ring, dot, glow].forEach(el => el.classList.toggle('is-on', on));
 
     addEventListener('pointermove', e => {
       if (e.pointerType !== 'mouse') return;
       tx = e.clientX; ty = e.clientY;
-      if (!seen) {
-        seen = true;
-        rx = gx = tx; ry = gy = ty;
-        paint();
-        show(true);
-        root.classList.add('cursor-on');
-      }
-      ring.classList.toggle('is-hot', !!(e.target.closest && e.target.closest(HOT)));
+      if (!seen) { seen = true; x = tx; y = ty; place(); glow.classList.add('is-on'); }
       if (!raf) raf = requestAnimationFrame(tick);
     }, { passive: true });
 
-    document.addEventListener('mouseleave', () => show(false));
-    document.addEventListener('mouseenter', () => { if (seen) show(true); });
+    document.addEventListener('mouseleave', () => glow.classList.remove('is-on'));
+    document.addEventListener('mouseenter', () => { if (seen) glow.classList.add('is-on'); });
   }
 
   /* ============================================================
