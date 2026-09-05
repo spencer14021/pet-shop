@@ -253,7 +253,7 @@ h2{text-wrap:balance;font-family:var(--disp);font-weight:700;letter-spacing:-.03
 .inst__list{display:flex;flex-direction:column;gap:14px}
 .inst__item{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);padding:clamp(20px,2.4vw,28px);
   display:grid;grid-template-columns:auto 1fr;gap:clamp(16px,2vw,24px);align-items:start;transition:border-color .4s var(--ease),box-shadow .4s var(--ease),transform .4s var(--ease)}
-.inst__item:hover{border-color:rgba(162,78,234,.34);box-shadow:0 30px 60px -46px rgba(61,22,104,.75);transform:translateY(-3px)}
+.inst__item:hover{border-color:rgba(162,78,234,.34);box-shadow:0 38px 86px -40px rgba(61,22,104,.72), 0 10px 36px -18px rgba(162,78,234,.30);transform:translateY(-3px)}
 /* PHOTO SLOT: drop <img src="…" alt="…"> inside .inst__plate to replace the icon plate */
 .inst__plate{width:clamp(64px,7vw,84px);aspect-ratio:1;border-radius:16px;display:grid;place-items:center;overflow:hidden;flex:none;
   background:linear-gradient(150deg,rgba(162,78,234,.14),rgba(248,176,124,.24))}
@@ -382,7 +382,7 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
 .teaser{display:flex;flex-direction:column;gap:12px;background:var(--paper);border:1px solid var(--line);
   border-radius:var(--r);padding:clamp(22px,2.6vw,30px);text-decoration:none;
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease),transform .35s var(--ease)}
-.teaser:hover{border-color:rgba(162,78,234,.34);box-shadow:0 30px 60px -46px rgba(61,22,104,.7);transform:translateY(-3px)}
+.teaser:hover{border-color:rgba(162,78,234,.34);box-shadow:0 38px 86px -40px rgba(61,22,104,.72), 0 10px 36px -18px rgba(162,78,234,.30);transform:translateY(-3px)}
 .teaser__ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;
   background:linear-gradient(150deg,rgba(162,78,234,.14),rgba(248,176,124,.24))}
 .teaser:nth-child(even) .teaser__ic{background:linear-gradient(150deg,rgba(248,176,124,.32),rgba(162,78,234,.12))}
@@ -426,7 +426,7 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
 .pcard{background:var(--paper);border:1px solid var(--line);border-radius:var(--r);
   padding:clamp(24px,2.8vw,34px);display:flex;flex-direction:column;gap:14px;
   transition:border-color .35s var(--ease),box-shadow .35s var(--ease),transform .35s var(--ease)}
-.pcard:hover{border-color:rgba(162,78,234,.34);box-shadow:0 30px 60px -46px rgba(61,22,104,.7);transform:translateY(-3px)}
+.pcard:hover{border-color:rgba(162,78,234,.34);box-shadow:0 38px 86px -40px rgba(61,22,104,.72), 0 10px 36px -18px rgba(162,78,234,.30);transform:translateY(-3px)}
 .pcard__ic{width:54px;height:54px;border-radius:16px;display:grid;place-items:center;
   background:linear-gradient(150deg,rgba(162,78,234,.14),rgba(248,176,124,.24))}
 .pcard:nth-child(2) .pcard__ic{background:linear-gradient(150deg,rgba(248,176,124,.32),rgba(162,78,234,.12))}
