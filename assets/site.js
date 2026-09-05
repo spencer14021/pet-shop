@@ -205,6 +205,63 @@
      built once, the legs are built once and instanced on both flanks, so the
      model is a real four-legged dog rather than an inflated cut-out.
      Normals are analytic, so the shading is smooth with no welding pass. */
+  /* --- round the outline's corners -----------------------------------
+     The logo is a hard-edged trace: ears, hocks and the tail end in points,
+     and once the shape is inflated into a volume those points read as
+     spikes. Resample the outline at an even spacing first — the traced
+     path bunches vertices on curves and leaves long straights elsewhere,
+     so smoothing it as-is would round the dense parts and miss the
+     corners — then run a short moving average around the loop. Every
+     corner picks up a radius; the silhouette keeps its proportions.
+     RADIUS is a fraction of the dog's longest side, so it scales. */
+  function roundPoly(poly, RADIUS = 0.010, PASSES = 2) {
+    const n = poly.length;
+    if (n < 8) return poly;
+
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity, per = 0;
+    for (let i = 0; i < n; i++) {
+      const [x, y] = poly[i], [x2, y2] = poly[(i + 1) % n];
+      if (x < minX) minX = x; if (x > maxX) maxX = x;
+      if (y < minY) minY = y; if (y > maxY) maxY = y;
+      per += Math.hypot(x2 - x, y2 - y);
+    }
+    const size = Math.max(maxX - minX, maxY - minY);
+    if (!(per > 0) || !(size > 0)) return poly;
+
+    const step = per / 2400;
+    const pts = [];
+    let carry = 0;
+    for (let i = 0; i < n; i++) {
+      const a = poly[i], b = poly[(i + 1) % n];
+      const vx = b[0] - a[0], vy = b[1] - a[1];
+      const len = Math.hypot(vx, vy);
+      if (len === 0) continue;
+      const ux = vx / len, uy = vy / len;
+      let t = carry;
+      while (t < len) { pts.push([a[0] + ux * t, a[1] + uy * t]); t += step; }
+      carry = t - len;
+    }
+
+    const M = pts.length;
+    if (M < 16) return poly;
+    const k = Math.max(1, Math.round(RADIUS * size / step));
+    const win = 2 * k + 1;
+    let src = pts;
+    for (let p = 0; p < PASSES; p++) {
+      const out = new Array(M);
+      for (let i = 0; i < M; i++) {
+        let sx = 0, sy = 0;
+        for (let j = -k; j <= k; j++) {
+          const q = src[((i + j) % M + M) % M];
+          sx += q[0]; sy += q[1];
+        }
+        out[i] = [sx / win, sy / win];
+      }
+      src = out;
+    }
+    return src;
+  }
+
   function buildDoberman(THREE, poly, cells) {
     const CAP = 13;                       // distance only matters near the rim
     const E = poly.length;
@@ -507,7 +564,7 @@
     for (let i = 0; i + 1 < nums.length; i += 2) poly.push([nums[i], nums[i + 1]]);
 
     const t0build = performance.now();
-    const built = buildDoberman(THREE, poly, innerWidth < 700 ? 165 : 240);
+    const built = buildDoberman(THREE, roundPoly(poly), innerWidth < 700 ? 165 : 240);
     console.debug(`[dobby] ${built.triangles} triangles, built in ${Math.round(performance.now() - t0build)} ms`);
 
     // black, like the silhouette in the logo — the volume reads through
