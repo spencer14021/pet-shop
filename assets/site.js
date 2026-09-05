@@ -206,6 +206,38 @@
       }
       document.body.appendChild(dots);
 
+      /* Each disc is fixed to the glass while the page slides beneath
+         it, so sooner or later every one of them ends up over the hero,
+         the purple band, a card or the footer. Sample what is actually
+         under each disc and send it away until plain ground returns.
+         Only a handful of things count as ground: the page itself and
+         the bare containers that paint nothing. */
+      const GROUND = /^(?:BODY|HTML|MAIN)$/;
+      const BARE = ['sec', 'wrap', 'hero', 'bgdrift'];   // paint a background and nothing else
+      const bare = el => GROUND.test(el.tagName) || BARE.some(c => el.classList.contains(c));
+
+      const discs = [...dots.children];
+      const audit = () => {
+        for (const disc of discs) {
+          const r = disc.getBoundingClientRect();
+          if (!r.width) continue;
+          const under = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2)
+            .find(el => !dots.contains(el));
+          disc.classList.toggle('is-away', !(under && bare(under)));
+        }
+      };
+
+      let waiting = false;
+      const later = () => {
+        if (waiting) return;
+        waiting = true;
+        requestAnimationFrame(() => { waiting = false; audit(); });
+      };
+      audit();
+      addEventListener('scroll', later, { passive: true });
+      addEventListener('resize', later, { passive: true });
+      setInterval(later, 250);          // they drift on their own too
+
       /* the discs drift on their own clocks; this only slides them past
          the page as it scrolls, each at its own fraction, so the margins
          have depth instead of a fixed pattern stuck to the glass */
