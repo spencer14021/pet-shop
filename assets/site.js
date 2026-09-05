@@ -212,6 +212,11 @@
          under each disc and send it away until plain ground returns.
          Only a handful of things count as ground: the page itself and
          the bare containers that paint nothing. */
+      /* Footer, header and the coloured bands each wrap their contents in
+         a `.wrap`, and `.wrap` is on the ground list — which quietly gave
+         a disc permission to sit inside them. Ancestry is checked first,
+         so no class further down can argue its way back out. */
+      const KEEPOUT = 'footer,.hdr,.util,.shop,.ticker,.cstrip,.map';
       const GROUND = /^(?:BODY|HTML|MAIN)$/;
       /* What hides a disc is content, not a coloured background. The top
          block of a page — `hero` on the landing, `phead` on the rest —
@@ -220,16 +225,30 @@
          Naming just one of the two is what made the front page behave
          unlike every other. */
       const BARE = ['sec', 'wrap', 'hero', 'phead', 'bgdrift'];
-      const bare = el => GROUND.test(el.tagName) || BARE.some(c => el.classList.contains(c));
+      const bare = el => !el.closest(KEEPOUT) &&
+        (GROUND.test(el.tagName) || BARE.some(c => el.classList.contains(c)));
 
       const discs = [...dots.children];
+      const PAD = 16;                    // clear off before touching, not halfway in
+
+      const groundAt = (px, py) => {
+        const el = document.elementsFromPoint(px, py).find(e => !dots.contains(e));
+        return !!el && bare(el);
+      };
+
       const audit = () => {
         for (const disc of discs) {
           const r = disc.getBoundingClientRect();
           if (!r.width) continue;
-          const under = document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2)
-            .find(el => !dots.contains(el));
-          disc.classList.toggle('is-away', !(under && bare(under)));
+          const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+          /* the centre alone lets a disc sink half into the footer before
+             it notices; sample its edges, pushed out a little, so it goes
+             while there is still a gap */
+          const clear =
+            groundAt(cx, cy) &&
+            groundAt(cx, r.top - PAD) && groundAt(cx, r.bottom + PAD) &&
+            groundAt(r.left - PAD, cy) && groundAt(r.right + PAD, cy);
+          disc.classList.toggle('is-away', !clear);
         }
       };
 
