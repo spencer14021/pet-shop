@@ -177,6 +177,102 @@
   }
 
   /* ============================================================
+     AMBIENT LIGHT
+     Two slow clouds on the ground, and a small warm pool that trails
+     the pointer. Both are painted by CSS; this puts them on the page
+     and eases the pool along, so the light lags the cursor a little
+     instead of snapping to it.
+     ============================================================ */
+  {
+    const drift = document.createElement('div');
+    drift.className = 'bgdrift';
+    drift.setAttribute('aria-hidden', 'true');
+    drift.append(document.createElement('i'), document.createElement('i'));
+    document.body.appendChild(drift);
+  }
+
+  /* ============================================================
+     THE PLATES
+     Drop the logo's doberman into every icon plate, so the circle has
+     something to turn into on hover. One <use> per plate: the path is
+     already in the sprite, this only points at it.
+     ============================================================ */
+  if (document.getElementById('dobbyPath')) {
+    for (const plate of document.querySelectorAll('.teaser__ic, .pcard__ic')) {
+      const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      svg.setAttribute('class', 'ic-dog');
+      svg.setAttribute('viewBox', '0 0 100 89.43');
+      svg.setAttribute('aria-hidden', 'true');
+      const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+      use.setAttribute('href', '#dobbyPath');
+      svg.appendChild(use);
+      plate.appendChild(svg);
+    }
+  }
+
+  /* ============================================================
+     POINTER
+     A dot on the real position, a ring easing along behind it, and the
+     ring swelling over anything clickable. The native arrow is hidden
+     only after both are on screen and following: if this block throws,
+     or never runs, the visitor still has a pointer.
+     ============================================================ */
+  if (!reduce && matchMedia('(hover:hover) and (pointer:fine)').matches) {
+    const root = document.documentElement;
+    const mk = cls => {
+      const el = document.createElement('div');
+      el.className = cls;
+      el.setAttribute('aria-hidden', 'true');
+      document.body.appendChild(el);
+      return el;
+    };
+    const ring = mk('dcur'), dot = mk('dcur-dot'), glow = mk('cglow');
+    const HOT = 'a,button,input,textarea,select,summary,label,[role="button"],[tabindex]';
+
+    let tx = innerWidth / 2, ty = innerHeight / 2;   // the pointer, now
+    let rx = tx, ry = ty;                            // the ring, catching up
+    let gx = tx, gy = ty;                            // the warm pool, slower still
+    let raf = 0, seen = false;
+
+    const paint = () => {
+      root.style.setProperty('--dx', tx + 'px');
+      root.style.setProperty('--dy', ty + 'px');
+      root.style.setProperty('--rx', rx.toFixed(1) + 'px');
+      root.style.setProperty('--ry', ry.toFixed(1) + 'px');
+      root.style.setProperty('--gx', gx.toFixed(1) + 'px');
+      root.style.setProperty('--gy', gy.toFixed(1) + 'px');
+    };
+
+    const tick = () => {
+      rx += (tx - rx) * 0.22; ry += (ty - ry) * 0.22;
+      gx += (tx - gx) * 0.12; gy += (ty - gy) * 0.12;
+      paint();
+      const moving = Math.abs(tx - rx) > 0.3 || Math.abs(ty - ry) > 0.3 ||
+                     Math.abs(tx - gx) > 0.3 || Math.abs(ty - gy) > 0.3;
+      raf = moving ? requestAnimationFrame(tick) : 0;
+    };
+
+    const show = on => [ring, dot, glow].forEach(el => el.classList.toggle('is-on', on));
+
+    addEventListener('pointermove', e => {
+      if (e.pointerType !== 'mouse') return;
+      tx = e.clientX; ty = e.clientY;
+      if (!seen) {
+        seen = true;
+        rx = gx = tx; ry = gy = ty;
+        paint();
+        show(true);
+        root.classList.add('cursor-on');
+      }
+      ring.classList.toggle('is-hot', !!(e.target.closest && e.target.closest(HOT)));
+      if (!raf) raf = requestAnimationFrame(tick);
+    }, { passive: true });
+
+    document.addEventListener('mouseleave', () => show(false));
+    document.addEventListener('mouseenter', () => { if (seen) show(true); });
+  }
+
+  /* ============================================================
      3D LOGO
      The doberman is inflated from the logo's own outline: a signed
      distance field turns the flat silhouette into a rounded body,
