@@ -18,7 +18,6 @@
   --peach-100:#fde7d3;
 
   --sand:#fdf4ec;
-  --sand-50:#fffcfa;
   --paper:#ffffff;
 
   --disp:"Bricolage Grotesque",system-ui,sans-serif;
@@ -338,7 +337,7 @@ h2{text-wrap:balance;font-family:var(--disp);font-weight:700;letter-spacing:-.03
    FOOTER
    ============================================================ */
 /* light footer, so the original logo can sit here untouched */
-footer{background:var(--sand-50);color:var(--muted);border-top:5px solid var(--peach)}
+footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peach)}
 .foot{display:grid;grid-template-columns:1.5fr 1fr 1fr 1fr;gap:clamp(24px,3vw,44px);padding-block:clamp(40px,5vw,60px) 30px}
 .foot__brand{display:flex;align-items:center}
 .foot__brand .brand__logo{height:52px;width:auto}
