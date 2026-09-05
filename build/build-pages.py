@@ -6,7 +6,9 @@ template. Texts are taken verbatim from doctordobby.com in each language.
 
 Edit the dictionaries below, never the generated HTML.
 """
+import hashlib
 import os
+import pathlib
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPRITE = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sprite.html"), encoding="utf-8").read()
@@ -495,7 +497,22 @@ def rel(frm, to):
 
 def asset(frm, name):
     d = os.path.dirname(frm) or "."
-    return os.path.relpath("assets/" + name, d).replace(os.sep, "/")
+    rel = os.path.relpath("assets/" + name, d).replace(os.sep, "/")
+    return rel + stamp(name)
+
+
+def stamp(name):
+    """A short content hash on the stylesheet and the script.
+
+    GitHub Pages serves assets/ with a long cache lifetime and the file names
+    never change, so a returning visitor keeps the stylesheet they downloaded
+    weeks ago and simply does not see a redesign. The hash moves whenever the
+    file does, which retires the cached copy; when the file is untouched the
+    URL is byte-identical and the cache still does its job.
+    """
+    if not name.endswith((".css", ".js")):
+        return ""
+    return "?v=" + hashlib.md5(pathlib.Path("assets", name).read_bytes()).hexdigest()[:8]
 
 
 def chrome(lang, key):
