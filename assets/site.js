@@ -213,7 +213,13 @@
          Only a handful of things count as ground: the page itself and
          the bare containers that paint nothing. */
       const GROUND = /^(?:BODY|HTML|MAIN)$/;
-      const BARE = ['sec', 'wrap', 'hero', 'bgdrift'];   // paint a background and nothing else
+      /* What hides a disc is content, not a coloured background. The top
+         block of a page — `hero` on the landing, `phead` on the rest —
+         paints a wash and nothing else, so its empty margins are still
+         ground; only the text and cards inside it push a disc away.
+         Naming just one of the two is what made the front page behave
+         unlike every other. */
+      const BARE = ['sec', 'wrap', 'hero', 'phead', 'bgdrift'];
       const bare = el => GROUND.test(el.tagName) || BARE.some(c => el.classList.contains(c));
 
       const discs = [...dots.children];
