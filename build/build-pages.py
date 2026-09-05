@@ -53,13 +53,13 @@ L["en"] = {
         skip="Skip to content", navLabel="Main", langLabel="Language", menuLabel="Menu",
         callLabel="Call 951 566 125", logoAlt="Dr. Dobby, clínica veterinaria",
         markAlt="Dr. Dobby doberman logo mark",
-        hoursMain="Mon–Fri 09:00–20:30", hoursSat="Sat 10:30–13:30",
+        hoursMain="Mon–Fri 09:00–20:00", hoursSat="Sat 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Services"), ("petshop", "Pet Shop"),
              ("installations", "Installations"), ("contact", "Contact")],
         home="Home", checking="Checking hours…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
-        hoursRow="Monday to Friday 09:00 – 20:30",
+        hoursRow="Monday to Friday 09:00 – 20:00",
         hoursRowSub="Saturdays 10:30 – 13:30 · Sunday closed",
         phoneSub="Call during opening hours", mailSub="We reply within one working day",
         waSub="Message us — appointments and quick questions",
@@ -77,7 +77,7 @@ L["en"] = {
         h1=["Veterinary", "Clinic in", "Fuengirola"],
         lede="Consultations, preventive medicine, surgery, our own laboratory and imaging, and a pet shop — all in one clinic on Avenida Nuestro Padre Jesús Cautivo.",
         ctaBook="Book a visit",
-        statusMonFri="Mon–Fri", statusMonFriH="09:00–20:30", statusSat="Sat", statusSatH="10:30–13:30",
+        statusMonFri="Mon–Fri", statusMonFriH="09:00–20:00", statusSat="Sat", statusSatH="10:30–13:30",
         ticker=["Veterinary consultation", "Vaccination", "Passports", "Microchips", "Deworming",
                 "Surgery", "Diagnostic imaging", "Laboratory research", "Hospital", "Dental care", "Pet shop"],
         teaserEyebrow="What we do",
@@ -197,13 +197,13 @@ L["es"] = {
         skip="Ir al contenido", navLabel="Principal", langLabel="Idioma", menuLabel="Menú",
         callLabel="Llamar al 951 566 125", logoAlt="Dr. Dobby, clínica veterinaria",
         markAlt="Logotipo de Dr. Dobby, silueta de dóberman",
-        hoursMain="Lun–Vie 09:00–20:30", hoursSat="Sáb 10:30–13:30",
+        hoursMain="Lun–Vie 09:00–20:00", hoursSat="Sáb 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Servicios"), ("petshop", "Tienda"),
              ("installations", "Instalaciones"), ("contact", "Contacto")],
         home="Inicio", checking="Comprobando el horario…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
-        hoursRow="Lunes a Viernes 09:00 – 20:30",
+        hoursRow="Lunes a Viernes 09:00 – 20:00",
         hoursRowSub="Sábados 10:30 – 13:30 · Domingo cerrado",
         phoneSub="Llámanos dentro del horario", mailSub="Respondemos en un día laborable",
         waSub="Escríbenos — citas y consultas rápidas",
@@ -221,7 +221,7 @@ L["es"] = {
         h1=["Clínica", "Veterinaria en", "Fuengirola"],
         lede="Consulta, medicina preventiva, cirugía, laboratorio y diagnóstico por imagen propios, y tienda para mascotas — todo en una clínica en la Avenida Nuestro Padre Jesús Cautivo.",
         ctaBook="Pedir cita",
-        statusMonFri="Lun–Vie", statusMonFriH="09:00–20:30", statusSat="Sáb", statusSatH="10:30–13:30",
+        statusMonFri="Lun–Vie", statusMonFriH="09:00–20:00", statusSat="Sáb", statusSatH="10:30–13:30",
         ticker=["Consulta veterinaria", "Vacunación", "Pasaportes", "Microchips", "Desparasitaciones",
                 "Cirugía general", "Diagnóstico por imagen", "Laboratoriales", "Hospitalizaciones",
                 "Limpieza dental", "Tienda mascota"],
@@ -342,13 +342,13 @@ L["ru"] = {
         skip="Перейти к содержимому", navLabel="Основное меню", langLabel="Язык", menuLabel="Меню",
         callLabel="Позвонить 951 566 125", logoAlt="Dr. Dobby, ветеринарная клиника",
         markAlt="Логотип Dr. Dobby, силуэт добермана",
-        hoursMain="Пн–Пт 09:00–20:30", hoursSat="Сб 10:30–13:30",
+        hoursMain="Пн–Пт 09:00–20:00", hoursSat="Сб 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Сервисы"), ("petshop", "Зоомагазин"),
              ("installations", "Инфраструктура"), ("contact", "Контакты")],
         home="Главная", checking="Проверяем часы работы…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
-        hoursRow="С понедельника по пятницу 09:00 – 20:30",
+        hoursRow="С понедельника по пятницу 09:00 – 20:00",
         hoursRowSub="Суббота 10:30 – 13:30 · Воскресенье выходной",
         phoneSub="Звоните в рабочие часы", mailSub="Отвечаем в течение рабочего дня",
         waSub="Напишите нам — запись и короткие вопросы",
@@ -366,7 +366,7 @@ L["ru"] = {
         h1=["Ветеринарная", "клиника в", "Фуэнхироле"],
         lede="Консультации, профилактическая медицина, хирургия, собственные лаборатория и отдел диагностики, зоомагазин — всё в одной клинике на Avenida Nuestro Padre Jesús Cautivo.",
         ctaBook="Записаться на приём",
-        statusMonFri="Пн–Пт", statusMonFriH="09:00–20:30", statusSat="Сб", statusSatH="10:30–13:30",
+        statusMonFri="Пн–Пт", statusMonFriH="09:00–20:00", statusSat="Сб", statusSatH="10:30–13:30",
         ticker=["Консультация", "Вакцинация", "Паспорта", "Чипирование", "Дегельминтизация",
                 "Хирургия", "Диагностика", "Лабораторные исследования", "Стационар",
                 "Чистка зубов", "Зоомагазин"],
@@ -526,7 +526,7 @@ def chrome(lang, key):
       <span class="util__i util__set--wide">{c["hoursSat"]}</span>
     </div>
     <div class="util__set">
-      <span class="util__i"><svg aria-hidden="true"><use href="#i-phone"/></svg><a href="tel:+34951566125"><b>951 566 125</b></a></span>
+      <span class="util__i"><svg aria-hidden="true"><use href="#i-phone"/></svg><a href="{WHATSAPP}" target="_blank" rel="noopener"><b>951 566 125</b></a></span>
       <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-wa"/></svg><a href="{WHATSAPP}" target="_blank" rel="noopener">WhatsApp 622 653 515</a></span>
       <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-mail"/></svg><a href="mailto:info@doctordobby.com">info@doctordobby.com</a></span>
       <span class="util__i util__set--wide"><svg aria-hidden="true"><use href="#i-pin"/></svg>{c["addressLine"]}</span>
@@ -551,7 +551,7 @@ def chrome(lang, key):
       <div class="lang" aria-label="{c["langLabel"]}">
         {langs}
       </div>
-      <a class="btn btn--v btn--sm btn--call" href="tel:+34951566125" aria-label="{c["callLabel"]}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="btn__label">951 566 125</span></a>
+      <a class="btn btn--v btn--sm btn--call" href="{WHATSAPP}" target="_blank" rel="noopener" aria-label="{c["callLabel"]}"><svg aria-hidden="true"><use href="#i-phone"/></svg><span class="btn__label">951 566 125</span></a>
       <button class="burger" id="burger" aria-label="{c["menuLabel"]}" aria-controls="nav" aria-expanded="false">
         <span></span><span></span><span></span>
       </button>
@@ -615,7 +615,7 @@ def outro(lang, key):
       </div>
       <div class="cstrip__cta">
         <a class="btn btn--v" href="{rel(me, PATHS[lang]["contact"])}">{d["outroCta"]}</a>
-        <a class="btn btn--ghost" href="tel:+34951566125"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
+        <a class="btn btn--ghost" href="{WHATSAPP}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
       </div>
     </div>
   </div>
@@ -653,7 +653,7 @@ def body_home(lang):
       <p class="lede" data-rise style="--d:500ms">{d["lede"]}</p>
       <div class="hero__cta" data-rise style="--d:600ms">
         <a class="btn btn--v" href="{rel(me, PATHS[lang]["contact"])}">{d["ctaBook"]}</a>
-        <a class="btn btn--ghost" href="tel:+34951566125"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
+        <a class="btn btn--ghost" href="{WHATSAPP}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-phone"/></svg>951 566 125</a>
       </div>
       <div class="status" data-rise style="--d:700ms">
         <span class="dot" data-open aria-live="polite">{c["checking"]}</span>
@@ -750,12 +750,12 @@ def body_home(lang):
         <div class="cstrip__facts">
           <div><svg aria-hidden="true"><use href="#i-pin"/></svg><span><b>Avd. Nuestro Padre Jesús Cautivo 15</b><span>{c["addrSub"]}</span></span></div>
           <div><svg aria-hidden="true"><use href="#i-clock"/></svg><span><b>{c["hoursRow"]}</b><span>{c["hoursRowSub"]}</span></span></div>
-          <div><svg aria-hidden="true"><use href="#i-phone"/></svg><span><b><a href="tel:+34951566125">951 566 125</a></b><span>{c["phoneSub"]}</span></span></div>
+          <div><svg aria-hidden="true"><use href="#i-phone"/></svg><span><b><a href="{WHATSAPP}" target="_blank" rel="noopener">951 566 125</a></b><span>{c["phoneSub"]}</span></span></div>
         </div>
       </div>
       <div class="cstrip__cta">
         <a class="btn btn--v" href="{rel(me, PATHS[lang]["contact"])}">{d["conCta"]}</a>
-        <a class="btn btn--ghost" href="tel:+34951566125"><svg aria-hidden="true"><use href="#i-phone"/></svg>{d["conCall"]}</a>
+        <a class="btn btn--ghost" href="{WHATSAPP}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-phone"/></svg>{d["conCall"]}</a>
       </div>
     </div>
   </div>
@@ -853,7 +853,7 @@ def body_contact(lang):
           </div>
           <div class="info__row">
             <svg aria-hidden="true"><use href="#i-phone"/></svg>
-            <div><b><a href="tel:+34951566125">951 566 125</a></b><span>{c["phoneSub"]}</span></div>
+            <div><b><a href="{WHATSAPP}" target="_blank" rel="noopener">951 566 125</a></b><span>{c["phoneSub"]}</span></div>
           </div>
           <div class="info__row">
             <svg aria-hidden="true"><use href="#i-wa"/></svg>
@@ -950,7 +950,7 @@ def page(lang, key):
   }},
   "geo": {{ "@type": "GeoCoordinates", "latitude": {GEO[0]}, "longitude": {GEO[1]} }},
   "openingHoursSpecification": [
-    {{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "20:30" }},
+    {{ "@type": "OpeningHoursSpecification", "dayOfWeek": ["Monday","Tuesday","Wednesday","Thursday","Friday"], "opens": "09:00", "closes": "20:00" }},
     {{ "@type": "OpeningHoursSpecification", "dayOfWeek": "Saturday", "opens": "10:30", "closes": "13:30" }}
   ],
   "sameAs": ["{IG}", "{FB}"]

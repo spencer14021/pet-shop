@@ -57,7 +57,7 @@
   document.querySelectorAll('[data-reveal]').forEach(el => io.observe(el));
 
   /* ---- open / closed, in clinic local time ---- */
-  const HOURS = { 1: [540, 1230], 2: [540, 1230], 3: [540, 1230], 4: [540, 1230], 5: [540, 1230], 6: [630, 810] };
+  const HOURS = { 1: [540, 1200], 2: [540, 1200], 3: [540, 1200], 4: [540, 1200], 5: [540, 1200], 6: [630, 810] };
   const hhmm = m => String(Math.floor(m / 60)).padStart(2, '0') + ':' + String(m % 60).padStart(2, '0');
   const dayName = i => new Intl.DateTimeFormat(LANG, { weekday: 'long' })
     .format(new Date(Date.UTC(2024, 0, 7 + i)));           // 2024-01-07 was a Sunday
