@@ -615,12 +615,17 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
    half-blurred with no way to clear it.
    ============================================================ */
 @media(hover:hover) and (pointer:fine){
-  .teaser,.pcard,.inst__item{transition:border-color .45s var(--ease),box-shadow .55s var(--ease),
+  .teaser,.pcard,.inst__item,.row{transition:border-color .45s var(--ease),box-shadow .55s var(--ease),
     transform .45s var(--ease),filter .45s var(--ease),opacity .45s var(--ease)}
   .teasers:has(.teaser:hover) .teaser:not(:hover),
   .pshop:has(.pcard:hover) .pcard:not(:hover),
-  .inst__list:has(.inst__item:hover) .inst__item:not(:hover){
+  .inst__list:has(.inst__item:hover) .inst__item:not(:hover),
+  .chart:has(.row:hover) .row:not(:hover){
     filter:blur(2.6px) saturate(.85);opacity:.5}
   .teasers .teaser:hover,.pshop .pcard:hover{transform:translateY(-4px) scale(1.035)}
   .inst__list .inst__item:hover{transform:translateY(-3px) scale(1.015)}
+  /* A chart row is the full column wide, so it swells rather than lifts —
+     the same 1.035 a card takes would throw its edges past the wrap. It
+     rises above its neighbours so the grown edges clear their hairlines. */
+  .chart .row:hover{transform:scale(1.022);z-index:2}
 }
