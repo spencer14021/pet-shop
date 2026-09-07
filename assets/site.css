@@ -324,7 +324,10 @@ h2{text-wrap:balance;font-family:var(--disp);font-weight:700;letter-spacing:-.03
   font-size:15.5px;transition:border-color .25s,background .25s}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--violet);background:var(--paper)}
 .field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
-.field textarea{min-height:98px;resize:vertical}
+.field textarea{min-height:98px;max-height:min(46vh,340px);resize:vertical}
+/* The recommendation panel scrolls at 74vh, so its box stops sooner —
+   past that the panel would be doing the growing, not the field. */
+.rec__form .field textarea{max-height:min(34vh,240px)}
 .consent{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:13.5px;color:var(--muted)}
 .consent input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--violet)}
 .consent a{color:var(--violet-700);font-weight:600}

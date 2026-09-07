@@ -173,6 +173,7 @@
         if (!res.ok || out.success === false) throw new Error(out.message || res.status);
         say(okMsg);
         form.reset();
+        form.querySelectorAll('textarea').forEach(t => { t.style.height = ''; });
         form.dispatchEvent(new CustomEvent('sent'));
       } catch (err) {
         console.warn('[dobby] form did not send:', err);
@@ -182,6 +183,22 @@
       }
     });
   }
+
+  /* ---- message boxes grow with what is typed ----
+     The drag handle in the corner is easy to miss, and a proposal is
+     usually longer than the four lines the box starts at. This only ever
+     grows the field: a height the visitor set by hand is never taken back,
+     and deleting text does not snap the box shut under the cursor. Past
+     the ceiling in the stylesheet it scrolls like any other textarea. */
+  const grow = el => {
+    if (el.scrollHeight <= el.clientHeight) return;
+    const cap = parseFloat(getComputedStyle(el).maxHeight) || Infinity;
+    el.style.height = Math.min(el.scrollHeight, cap) + 'px';
+  };
+  document.querySelectorAll('.field textarea').forEach(el => {
+    el.addEventListener('input', () => grow(el));
+    grow(el);                     // in case the browser restored a draft
+  });
 
   /* Only the appointment form carries a consent box, so only it can ask for
      one back; the other two just point at the field they are missing. */
