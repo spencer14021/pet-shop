@@ -324,10 +324,17 @@ h2{text-wrap:balance;font-family:var(--disp);font-weight:700;letter-spacing:-.03
   font-size:15.5px;transition:border-color .25s,background .25s}
 .field input:focus,.field textarea:focus{outline:none;border-color:var(--violet);background:var(--paper)}
 .field input:focus-visible,.field textarea:focus-visible{outline:2px solid var(--violet);outline-offset:2px}
-.field textarea{min-height:98px;max-height:min(46vh,340px);resize:vertical}
+/* The ceiling is for the box growing itself, not for the hand on the
+   corner: `max-height` would bind `resize` too, and dragging is an
+   explicit request that should not be argued with. So it travels as a
+   custom property that only the script reads — a plain number, because
+   an unregistered property comes back to script as the text that was
+   written here, and `min(46vh,340px)` is not something parseFloat can
+   read. The script clamps it against the viewport itself. */
+.field textarea{min-height:98px;--grow-max:340;resize:vertical}
 /* The recommendation panel scrolls at 74vh, so its box stops sooner —
    past that the panel would be doing the growing, not the field. */
-.rec__form .field textarea{max-height:min(34vh,240px)}
+.rec__form .field textarea{--grow-max:240}
 .consent{display:flex;gap:11px;align-items:flex-start;margin-top:18px;font-size:13.5px;color:var(--muted)}
 .consent input{width:18px;height:18px;flex:none;margin-top:2px;accent-color:var(--violet)}
 .consent a{color:var(--violet-700);font-weight:600}
@@ -693,7 +700,14 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
    exactly the same, while still letting the open and close animate.
    ============================================================ */
 .rec{position:fixed;right:clamp(12px,2.2vw,26px);bottom:clamp(12px,2.2vw,26px);z-index:110;
-  display:flex;flex-direction:column-reverse;align-items:flex-end;gap:12px}
+  display:flex;flex-direction:column-reverse;align-items:flex-end;gap:12px;
+  /* The closed panel is hidden with `visibility`, which keeps it in the
+     layout — so this box stays panel-tall whether or not anything is
+     showing, and a transparent 370x550 slab in the corner would swallow
+     every click on the page beneath it. The container itself is therefore
+     never a target; only the two things that can actually be seen are. */
+  pointer-events:none}
+.rec__open{pointer-events:auto}
 
 .rec__open{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:inherit;font-weight:600;font-size:14.5px;
   background:var(--violet);color:#fff;border:0;border-radius:999px;padding:13px 20px;
@@ -714,8 +728,13 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
      Transitioning it instead leaves the panel hidden for the first frame,
      and focus refuses to land on a hidden element — which is exactly the
      frame the open handler tries to put the caret in the message box. */
-  transition:opacity .3s var(--ease),transform .36s var(--ease),visibility 0s linear .36s}
-.rec[data-open] .rec__panel{opacity:1;visibility:visible;transform:none;
+  transition:opacity .3s var(--ease),transform .36s var(--ease),visibility 0s linear .36s;
+  /* Whether the panel catches a click is tied to the attribute, never to
+     the transition finishing. A backgrounded or interrupted tab does not
+     run transitions to the end, and a panel left mid-fade would go on
+     swallowing every click in this corner of the page. */
+  pointer-events:none}
+.rec[data-open] .rec__panel{opacity:1;visibility:visible;transform:none;pointer-events:auto;
   transition:opacity .3s var(--ease),transform .36s var(--ease),visibility 0s}
 .rec__panel h2{margin:0;padding-right:34px;font-family:var(--disp);font-weight:700;font-size:20px;letter-spacing:-.02em}
 .rec__panel>p{margin-top:8px;color:var(--muted);font-size:14px;text-wrap:pretty}

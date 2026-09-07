@@ -192,7 +192,8 @@
      the ceiling in the stylesheet it scrolls like any other textarea. */
   const grow = el => {
     if (el.scrollHeight <= el.clientHeight) return;
-    const cap = parseFloat(getComputedStyle(el).maxHeight) || Infinity;
+    const want = parseFloat(getComputedStyle(el).getPropertyValue('--grow-max'));
+    const cap = Math.min(want || Infinity, innerHeight * 0.5);   // never past half the screen
     el.style.height = Math.min(el.scrollHeight, cap) + 'px';
   };
   document.querySelectorAll('.field textarea').forEach(el => {
