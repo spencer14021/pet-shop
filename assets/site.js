@@ -12,21 +12,39 @@
       shutToday: h => `Closed <b>· opens today ${h}</b>`,
       shut: (d, h) => `Closed <b>· opens ${d} ${h}</b>`,
       formError: 'Add your name and email and accept the Privacy Policy, then send again.',
-      formOk: 'Thank you — we will call you back during opening hours.'
+      formOk: 'Thank you — we will call you back during opening hours.',
+      fieldError: 'Please fill in the highlighted field.',
+      sending: 'Sending…',
+      sentOk: 'Thank you — your message is on its way.',
+      sendFail: 'That did not go through. Try again, or write to us directly.',
+      tooMany: n => `Up to ${n} photos, please.`,
+      tooBig: mb => `Each photo has to be under ${mb} MB.`
     },
     es: {
       open: h => `Abierto ahora <b>· hasta las ${h}</b>`,
       shutToday: h => `Cerrado <b>· abre hoy a las ${h}</b>`,
       shut: (d, h) => `Cerrado <b>· abre el ${d} a las ${h}</b>`,
       formError: 'Escribe tu nombre y tu email y acepta la política de privacidad, y vuelve a enviar.',
-      formOk: 'Gracias — te llamamos dentro del horario de apertura.'
+      formOk: 'Gracias — te llamamos dentro del horario de apertura.',
+      fieldError: 'Rellena el campo marcado.',
+      sending: 'Enviando…',
+      sentOk: 'Gracias — tu mensaje está en camino.',
+      sendFail: 'No se ha podido enviar. Inténtalo otra vez o escríbenos directamente.',
+      tooMany: n => `Máximo ${n} fotos, por favor.`,
+      tooBig: mb => `Cada foto tiene que pesar menos de ${mb} MB.`
     },
     ru: {
       open: h => `Открыто <b>· до ${h}</b>`,
       shutToday: h => `Закрыто <b>· откроется сегодня в ${h}</b>`,
       shut: (d, h) => `Закрыто <b>· откроется в ${d} в ${h}</b>`,
       formError: 'Укажите имя и email и примите политику конфиденциальности, затем отправьте снова.',
-      formOk: 'Спасибо — мы перезвоним вам в рабочие часы.'
+      formOk: 'Спасибо — мы перезвоним вам в рабочие часы.',
+      fieldError: 'Заполните отмеченное поле.',
+      sending: 'Отправляем…',
+      sentOk: 'Спасибо — ваше сообщение отправлено.',
+      sendFail: 'Отправить не удалось. Попробуйте ещё раз или напишите нам напрямую.',
+      tooMany: n => `Не больше ${n} фото, пожалуйста.`,
+      tooBig: mb => `Каждое фото должно быть меньше ${mb} МБ.`
     }
   }[LANG] || {};
 
@@ -96,25 +114,145 @@
     rows.forEach(r => { r.hidden = !(f === 'all' || r.dataset.cat === f); });
   }));
 
-  /* ---- contact form (front-end only until a backend is wired up) ---- */
-  const form = document.getElementById('form'), note = document.getElementById('formNote');
-  if (form) form.addEventListener('submit', e => {
-    e.preventDefault();
-    form.querySelectorAll('[aria-invalid]').forEach(i => i.removeAttribute('aria-invalid'));
-    const missing = [...form.querySelectorAll('[required]')]
-      .find(i => i.type === 'checkbox' ? !i.checked : !i.value.trim());
-    note.hidden = false;
-    if (missing) {
-      missing.setAttribute('aria-invalid', 'true');
-      note.classList.add('is-err');
-      note.textContent = T.formError;
-      missing.focus();
-      return;
+  /* ============================================================
+     FORMS
+     Three of them — the appointment form, the partnership form beside
+     it, and the recommendation window — all posting to the same relay.
+     The endpoint and the key live in the markup, not here, so every one
+     of them still delivers with this script switched off: the browser
+     posts the form natively and the relay shows its own confirmation
+     page. All this does is intercept that and keep the visitor here.
+     ============================================================ */
+
+  /* The clinic's own address, read off the page rather than repeated in
+     here — the utility bar and the footer both carry it on every page. */
+  const MAIL = (document.querySelector('a[href^="mailto:"]') || {}).href || '';
+
+  /* No access key pasted in yet. Rather than swallow what someone wrote,
+     hand it to their own mail client with the fields already filled in. */
+  const HIDDEN = ['access_key', 'subject', 'from_name', 'botcheck', 'attachment'];
+  const mailFallback = form => {
+    const data = new FormData(form);
+    const body = [...data.entries()]
+      .filter(([k, v]) => !HIDDEN.includes(k) && typeof v === 'string' && v.trim())
+      .map(([k, v]) => `${k}: ${v}`).join('\n');
+    location.href = `${MAIL}?subject=${encodeURIComponent(data.get('subject') || '')}` +
+                    `&body=${encodeURIComponent(body)}`;
+  };
+
+  function wire(form, noteId, okMsg, errMsg) {
+    if (!form) return;
+    const note = document.getElementById(noteId);
+    const say = (text, bad) => {
+      note.hidden = false;
+      note.classList.toggle('is-err', !!bad);
+      note.textContent = text;
+    };
+
+    form.addEventListener('submit', async e => {
+      e.preventDefault();
+      form.querySelectorAll('[aria-invalid]').forEach(i => i.removeAttribute('aria-invalid'));
+
+      const missing = [...form.querySelectorAll('[required]')]
+        .find(i => i.type === 'checkbox' ? !i.checked : !i.value.trim());
+      if (missing) {
+        missing.setAttribute('aria-invalid', 'true');
+        say(errMsg, true);
+        missing.focus();
+        return;
+      }
+
+      const key = form.elements.access_key ? form.elements.access_key.value : '';
+      if (MAIL && (!key || key.startsWith('REPLACE'))) { mailFallback(form); return; }
+
+      say(T.sending);
+      form.classList.add('is-sending');
+      try {
+        const res = await fetch(form.action, { method: 'POST', body: new FormData(form) });
+        const out = await res.json().catch(() => ({}));
+        if (!res.ok || out.success === false) throw new Error(out.message || res.status);
+        say(okMsg);
+        form.reset();
+        form.dispatchEvent(new CustomEvent('sent'));
+      } catch (err) {
+        console.warn('[dobby] form did not send:', err);
+        say(T.sendFail, true);
+      } finally {
+        form.classList.remove('is-sending');
+      }
+    });
+  }
+
+  /* Only the appointment form carries a consent box, so only it can ask for
+     one back; the other two just point at the field they are missing. */
+  wire(document.getElementById('form'), 'formNote', T.formOk, T.formError);
+  wire(document.getElementById('partForm'), 'partNote', T.sentOk, T.fieldError);
+  wire(document.getElementById('recForm'), 'recNote', T.sentOk, T.fieldError);
+
+  /* ---- the recommendation window ----
+     Non-modal on purpose: the page behind stays readable and usable, so
+     somebody halfway down the services list can send a thought without
+     losing their place. Escape and the × both hand focus back to the
+     pill it opened from. */
+  const rec = document.getElementById('rec');
+  if (rec) {
+    const pill = document.getElementById('recOpen');
+    const shut = document.getElementById('recClose');
+    const panel = document.getElementById('recPanel');
+    const msg = document.getElementById('r-msg');
+    const isOpen = () => rec.hasAttribute('data-open');
+    const setOpen = (on, moveFocus = true) => {
+      rec.toggleAttribute('data-open', on);
+      pill.setAttribute('aria-expanded', String(on));
+      if (!moveFocus) return;
+      /* The panel is revealed by `visibility`, and focus will not land on an
+         element the browser still considers hidden. The attribute above is
+         set, but the style behind it has not been recalculated yet — so read
+         a layout property first, which forces that recalculation, and only
+         then hand over the caret. Waiting a frame instead is a coin toss on
+         the very first open. */
+      panel.offsetHeight;                                    // eslint-disable-line
+      (on ? msg : pill).focus({ preventScroll: true });
+    };
+
+    pill.addEventListener('click', () => setOpen(!isOpen()));
+    shut.addEventListener('click', () => setOpen(false));
+    addEventListener('keydown', e => { if (e.key === 'Escape' && isOpen()) setOpen(false); });
+
+    /* Close a little after a successful send, long enough to read the
+       thank-you; focus stays put so the close is not felt as a jump. */
+    document.getElementById('recForm')
+      .addEventListener('sent', () => setTimeout(() => setOpen(false, false), 2800));
+
+    /* The photo picker is only in the markup while attachments are on. */
+    const pics = document.getElementById('r-pic'), shelf = document.getElementById('recFiles');
+    if (pics && shelf) {
+      const maxN = +pics.dataset.maxN || 4, maxMB = +pics.dataset.maxMb || 5;
+      const recNote = document.getElementById('recNote');
+      pics.addEventListener('change', () => {
+        shelf.textContent = '';
+        const files = [...pics.files];
+        const complain = text => {
+          recNote.hidden = false;
+          recNote.classList.add('is-err');
+          recNote.textContent = text;
+          pics.value = '';
+        };
+        if (files.length > maxN) return complain(T.tooMany(maxN));
+        if (files.some(f => f.size > maxMB * 1024 * 1024)) return complain(T.tooBig(maxMB));
+        recNote.hidden = true;
+        for (const f of files) {
+          const li = document.createElement('li');
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(f);
+          img.alt = '';
+          img.addEventListener('load', () => URL.revokeObjectURL(img.src), { once: true });
+          li.append(img, document.createTextNode(f.name));
+          shelf.appendChild(li);
+        }
+      });
     }
-    note.classList.remove('is-err');
-    note.textContent = T.formOk;
-    form.reset();
-  });
+  }
 
   /* ============================================================
      CONTACT MAP

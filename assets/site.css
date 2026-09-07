@@ -467,8 +467,17 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
   .row h3{grid-area:title}
   .row p{grid-area:desc}
 }
-@media(max-width:860px){
-  .hdr__in{gap:10px}
+/* ============================================================
+   HEADER BREAKPOINT
+   Five nav items, and Russian is the long one — "Инфраструктура"
+   and "Партнёрство" put the row at 940px before the logo, the
+   language switch and the phone button are counted. So the menu
+   folds into the burger while there is still room for it, rather
+   than at the 860px the rest of the layout uses; below 1200px the
+   gaps close up first, which buys the last stretch.
+   ============================================================ */
+@media(max-width:1200px){.nav{gap:20px}}
+@media(max-width:1024px){
   .nav{position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:0;
     background:var(--paper);padding:4px var(--pad) 22px;border-bottom:1px solid var(--line);
     box-shadow:0 30px 60px -40px rgba(20,16,26,.55);
@@ -482,6 +491,9 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
   .nav__lang a[aria-current]{background:var(--violet);color:#fff}
   .hdr__end .lang{display:none}
   .burger{display:grid}
+}
+@media(max-width:860px){
+  .hdr__in{gap:10px}
   .brand__logo,.hdr.is-stuck .brand__logo{height:40px}
   .btn--call{padding:11px;border-radius:50%}
   .btn--call .btn__label{display:none}
@@ -628,4 +640,114 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
      the same 1.035 a card takes would throw its edges past the wrap. It
      rises above its neighbours so the grown edges clear their hairlines. */
   .chart .row:hover{transform:scale(1.022);z-index:2}
+}
+
+/* ============================================================
+   FORM PLUMBING
+   Shared by the three forms: the appointment form on the contact
+   page, the partnership form beside it, and the recommendation
+   window. `.hp` is the honeypot Web3Forms expects — it has to stay
+   reachable to a bot filling every input, so it is moved off-screen
+   rather than removed from the layout with `display:none`.
+   ============================================================ */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0;pointer-events:none}
+.field__note{display:block;margin-top:7px;font-size:12.5px;color:var(--muted)}
+.is-sending{opacity:.62;pointer-events:none}
+
+/* ============================================================
+   PARTNERSHIP
+   The band under the contact block: the two direct routes on the
+   left, a short form on the right for anyone who would rather not
+   open a mail client.
+   ============================================================ */
+.partner{display:grid;grid-template-columns:1fr minmax(290px,.8fr);gap:clamp(24px,3.6vw,56px);align-items:start;
+  background:var(--paper);border:1px solid var(--line);border-radius:clamp(18px,2.4vw,26px);
+  padding:clamp(24px,3.4vw,44px);box-shadow:0 34px 74px -44px rgba(61,22,104,.4)}
+.partner h2{font-size:clamp(24px,2.9vw,34px);margin-top:12px}
+.partner__ways{display:flex;flex-direction:column;gap:12px;margin-top:26px}
+.partner__ways a{display:inline-flex;align-items:center;gap:11px;text-decoration:none;font-weight:600;
+  width:fit-content;transition:color .25s var(--ease),transform .25s var(--ease)}
+.partner__ways svg{width:19px;height:19px;flex:none;stroke:var(--violet);fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.partner__ways a:hover{color:var(--violet-700);transform:translateX(3px)}
+.partner__form{border-left:1px solid var(--line);padding-left:clamp(24px,3.4vw,44px)}
+.partner__form .field:first-of-type{margin-top:0}
+.partner__form .btn{width:100%;justify-content:center;margin-top:20px}
+@media(max-width:880px){
+  .partner{grid-template-columns:1fr}
+  .partner__form{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:28px}
+}
+
+/* ============================================================
+   RECOMMENDATION WINDOW
+   Bottom right of every page. Closed it is a single pill; open it is
+   a panel that leaves the page usable behind it — deliberately not a
+   modal, so somebody halfway down the services list can send a
+   thought without losing their place. Escape and the × both put
+   focus back on the pill.
+
+   It is hidden with `visibility`, not the `hidden` attribute: that
+   keeps it out of the accessibility tree and out of the tab order
+   exactly the same, while still letting the open and close animate.
+   ============================================================ */
+.rec{position:fixed;right:clamp(12px,2.2vw,26px);bottom:clamp(12px,2.2vw,26px);z-index:110;
+  display:flex;flex-direction:column-reverse;align-items:flex-end;gap:12px}
+
+.rec__open{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font:inherit;font-weight:600;font-size:14.5px;
+  background:var(--violet);color:#fff;border:0;border-radius:999px;padding:13px 20px;
+  box-shadow:0 20px 42px -16px var(--violet-700);
+  transition:background .28s var(--ease),transform .28s var(--ease),box-shadow .28s var(--ease)}
+.rec__open svg{width:19px;height:19px;flex:none;stroke:currentColor;fill:none;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.rec__open:hover{background:var(--violet-700);transform:translateY(-2px)}
+.rec__open:focus-visible{outline:2px solid var(--violet-900);outline-offset:3px}
+/* while the panel is up the pill is just its anchor, so it steps back */
+.rec[data-open] .rec__open{background:var(--ink);box-shadow:0 10px 24px -14px rgba(20,16,26,.8)}
+
+.rec__panel{position:relative;width:min(370px,calc(100vw - 24px));max-height:min(74vh,640px);overflow-y:auto;
+  background:var(--paper);border:1px solid var(--line);border-radius:22px;padding:26px 24px 24px;
+  box-shadow:0 50px 96px -34px rgba(61,22,104,.5), 0 12px 40px -20px rgba(162,78,234,.3);
+  opacity:0;visibility:hidden;transform:translateY(14px) scale(.97);transform-origin:100% 100%;
+  /* `visibility` is switched outright, never interpolated: held back until
+     the fade has finished on the way out, flipped instantly on the way in.
+     Transitioning it instead leaves the panel hidden for the first frame,
+     and focus refuses to land on a hidden element — which is exactly the
+     frame the open handler tries to put the caret in the message box. */
+  transition:opacity .3s var(--ease),transform .36s var(--ease),visibility 0s linear .36s}
+.rec[data-open] .rec__panel{opacity:1;visibility:visible;transform:none;
+  transition:opacity .3s var(--ease),transform .36s var(--ease),visibility 0s}
+.rec__panel h2{margin:0;padding-right:34px;font-family:var(--disp);font-weight:700;font-size:20px;letter-spacing:-.02em}
+.rec__panel>p{margin-top:8px;color:var(--muted);font-size:14px;text-wrap:pretty}
+
+.rec__x{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:32px;height:32px;
+  cursor:pointer;background:transparent;border:0;border-radius:50%;color:var(--muted);
+  transition:background .24s var(--ease),color .24s var(--ease)}
+.rec__x svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+.rec__x:hover{background:var(--sand);color:var(--ink)}
+
+.rec__form .field textarea{min-height:88px}
+.rec__form .btn{width:100%;justify-content:center;margin-top:18px}
+.rec__wa{display:inline-flex;align-items:center;gap:9px;margin-top:16px;font-size:13.5px;font-weight:600;
+  color:var(--violet-700);text-decoration:none;transition:transform .25s var(--ease)}
+.rec__wa svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rec__wa:hover{transform:translateX(3px)}
+
+/* the photo picker — emitted only while FORM_ATTACH is on */
+.rec__attach input[type=file]{position:absolute;left:-9999px}
+.rec__pick{display:inline-flex;align-items:center;gap:9px;cursor:pointer;
+  border:1.5px dashed var(--line);border-radius:12px;padding:11px 15px;width:100%;
+  font-size:14px;color:var(--muted);transition:border-color .25s var(--ease),color .25s var(--ease)}
+.rec__pick svg{width:17px;height:17px;flex:none;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rec__pick:hover{border-color:var(--violet);color:var(--violet-700)}
+.rec__attach input:focus-visible+.rec__pick{outline:2px solid var(--violet);outline-offset:2px}
+.rec__files{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:6px}
+.rec__files li{display:flex;align-items:center;gap:9px;font-size:12.5px;color:var(--muted)}
+.rec__files img{width:30px;height:30px;flex:none;object-fit:cover;border-radius:7px}
+
+@media(max-width:420px){
+  .rec{left:12px;right:12px}
+  .rec__panel{width:100%}
+  .rec__open{width:100%;justify-content:center}
+}
+@media(prefers-reduced-motion:reduce){
+  .rec__panel{transition:opacity .01s,visibility 0s linear .01s;transform:none}
+  .rec[data-open] .rec__panel{transition:opacity .01s,visibility 0s;transform:none}
 }

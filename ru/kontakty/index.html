@@ -13,7 +13,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="../../assets/site.css?v=81167f7d">
+<link rel="stylesheet" href="../../assets/site.css?v=fe1079c4">
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -62,6 +62,10 @@
   <symbol id="i-bowl" viewBox="0 0 24 24"><path d="M3.4 11h17.2a8.6 8.6 0 0 1-17.2 0Z"/><path d="M6.2 8.4C6.2 6.5 8.8 5 12 5s5.8 1.5 5.8 3.4"/></symbol>
   <symbol id="i-ball" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.6"/><path d="M5.4 6.4a9.2 9.2 0 0 1 0 11.2M18.6 6.4a9.2 9.2 0 0 0 0 11.2"/></symbol>
   <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20.4S4.3 15.5 4.3 10.5A4.4 4.4 0 0 1 12 7.6a4.4 4.4 0 0 1 7.7 2.9c0 5-7.7 9.9-7.7 9.9Z"/><path d="M6.6 12.6h2.6l1.5-2.4 2 4.2 1.3-1.8h3.4"/></symbol>
+  <symbol id="i-chat" viewBox="0 0 24 24"><path d="M20.4 11.6c0 3.9-3.7 7.1-8.4 7.1a10 10 0 0 1-2.5-.3l-4.9 1.8 1.4-4A6.7 6.7 0 0 1 3.6 11.6c0-3.9 3.7-7.1 8.4-7.1s8.4 3.2 8.4 7.1Z"/><path d="M8.6 11.4h6.8M8.6 8.4h4.2"/></symbol>
+  <symbol id="i-clip" viewBox="0 0 24 24"><path d="M18.6 11.4 12 18a4.4 4.4 0 0 1-6.2-6.2l7.1-7.1a2.9 2.9 0 0 1 4.2 4.2l-7.1 7.1a1.5 1.5 0 0 1-2.1-2.1l6.4-6.4"/></symbol>
+  <symbol id="i-link" viewBox="0 0 24 24"><path d="M10.3 13.7a4.1 4.1 0 0 0 5.9 0l2.9-2.9a4.1 4.1 0 0 0-5.9-5.9l-1.5 1.5"/><path d="M13.7 10.3a4.1 4.1 0 0 0-5.9 0l-2.9 2.9a4.1 4.1 0 0 0 5.9 5.9l1.5-1.5"/></symbol>
+  <symbol id="i-close" viewBox="0 0 24 24"><path d="m6.4 6.4 11.2 11.2M17.6 6.4 6.4 17.6"/></symbol>
   <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M4 12h15"/><path d="m13 6 6 6-6 6"/></symbol>
   <symbol id="i-ig" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="16.9" cy="7.1" r=".9" fill="currentColor" stroke="none"/></symbol>
   <symbol id="i-wa" viewBox="0 0 24 24"><path d="M12 3.2a8.8 8.8 0 0 0-7.5 13.4L3.3 20.7l4.2-1.1A8.8 8.8 0 1 0 12 3.2Z"/><path d="M9.2 8.5c.3-.1.6 0 .8.3l.7 1.2c.2.3.1.6-.1.8l-.5.5a5.4 5.4 0 0 0 2.4 2.4l.5-.5c.2-.2.5-.3.8-.1l1.2.7c.3.2.4.5.3.8-.3.9-1.1 1.4-2 1.2a7.6 7.6 0 0 1-5.3-5.3c-.2-.9.3-1.7 1.2-2Z"/></symbol>
@@ -94,6 +98,7 @@
       <a href="../zoomagazin/">Зоомагазин</a>
       <a href="../infrastruktura/">Инфраструктура</a>
       <a href="./" aria-current="page">Контакты</a>
+      <a href="../partnerstvo/">Партнёрство</a>
       <div class="nav__lang" aria-label="Язык">
         <a href="../../contact/" hreflang="en">EN</a><a href="../../es/contacto/" hreflang="es">ES</a><a href="./" hreflang="ru" aria-current="page">RU</a>
       </div>
@@ -177,7 +182,11 @@
         </div>
       </div>
 
-      <form class="form" id="form" data-reveal style="--d:120ms" novalidate>
+      <form class="form" id="form" action="https://api.web3forms.com/submit" method="POST" data-reveal style="--d:120ms" novalidate>
+        <input type="hidden" name="access_key" value="REPLACE-WITH-WEB3FORMS-KEY">
+        <input type="hidden" name="subject" value="Appointment request from doctordobby.com">
+        <input type="hidden" name="from_name" value="doctordobby.com">
+        <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
         <h2>Связаться с нами</h2>
         <p>Расскажите о вашем животном — мы подберём время.</p>
         <div class="field"><label for="f-name">Имя</label><input id="f-name" name="name" autocomplete="name" required></div>
@@ -227,6 +236,29 @@
   </div>
 </footer>
 
-<script src="../../assets/site.js?v=dbcdeb91"></script>
+<div class="rec" id="rec">
+  <button class="rec__open" id="recOpen" type="button" aria-expanded="false" aria-controls="recPanel">
+    <svg aria-hidden="true"><use href="#i-chat"/></svg><span>Есть пожелание?</span>
+  </button>
+
+  <div class="rec__panel" id="recPanel" role="dialog" aria-labelledby="recTitle">
+    <button class="rec__x" id="recClose" type="button" aria-label="Закрыть"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+    <h2 id="recTitle">Есть пожелание?</h2>
+    <p>Поделитесь с нами — мы читаем каждое сообщение.</p>
+    <form class="rec__form" id="recForm" action="https://api.web3forms.com/submit" method="POST" novalidate>
+        <input type="hidden" name="access_key" value="REPLACE-WITH-WEB3FORMS-KEY">
+        <input type="hidden" name="subject" value="Recommendation from doctordobby.com">
+        <input type="hidden" name="from_name" value="doctordobby.com">
+        <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="field"><label for="r-msg">Ваше сообщение</label><textarea id="r-msg" name="message" required></textarea></div>
+        <div class="field"><label for="r-mail">Ваш email</label><input id="r-mail" name="email" type="email" autocomplete="email" spellcheck="false"><span class="field__note">Чтобы мы могли ответить. Необязательно.</span></div>
+        <a class="rec__wa" href="https://wa.me/34622653515" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>Или пришлите фото в WhatsApp</a>
+        <button class="btn btn--v" type="submit">Отправить</button>
+        <p class="form__done" id="recNote" hidden role="status"></p>
+    </form>
+  </div>
+</div>
+
+<script src="../../assets/site.js?v=59c7507d"></script>
 </body>
 </html>

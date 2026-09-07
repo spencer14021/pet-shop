@@ -13,18 +13,18 @@ import pathlib
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SPRITE = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "sprite.html"), encoding="utf-8").read()
 
-KEYS = ("home", "services", "petshop", "installations", "contact")
+KEYS = ("home", "services", "petshop", "installations", "contact", "partnership")
 
 PATHS = {
     "en": {"home": "index.html", "services": "services/index.html",
            "petshop": "pet-shop/index.html", "installations": "installations/index.html",
-           "contact": "contact/index.html"},
+           "contact": "contact/index.html", "partnership": "partnership/index.html"},
     "es": {"home": "es/index.html", "services": "es/servicios/index.html",
            "petshop": "es/tienda-mascota/index.html", "installations": "es/instalaciones/index.html",
-           "contact": "es/contacto/index.html"},
+           "contact": "es/contacto/index.html", "partnership": "es/colaboraciones/index.html"},
     "ru": {"home": "ru/index.html", "services": "ru/servisy/index.html",
            "petshop": "ru/zoomagazin/index.html", "installations": "ru/infrastruktura/index.html",
-           "contact": "ru/kontakty/index.html"},
+           "contact": "ru/kontakty/index.html", "partnership": "ru/partnerstvo/index.html"},
 }
 
 FONTS = {
@@ -47,6 +47,26 @@ IG = "https://www.instagram.com/dr.dobby_clinica_veterinaria/"
 FB = "https://www.facebook.com/people/Cl%C3%ADnica-Veterinaria-Doctor-Dobby/100063490931078/"
 WHATSAPP = "https://wa.me/34622653515"
 
+# --- Where the three forms deliver ------------------------------------------
+# A static site cannot send mail itself, so every form POSTs to Web3Forms,
+# which relays to MAIL_TO. The access key is public by design: it authorises
+# delivery to that one address and nothing else, which is why it can sit in
+# the markup. Get one at web3forms.com — it arrives by email, no account.
+#
+# Until a real key is pasted in here, site.js falls back to the visitor's own
+# mail client, so a message is never silently dropped.
+MAIL_TO = "info@doctordobby.com"
+FORM_ACTION = "https://api.web3forms.com/submit"
+FORM_KEY = "REPLACE-WITH-WEB3FORMS-KEY"
+
+# Photo attachments. Web3Forms carries files on its paid tier only, so this
+# stays off: the recommendation window sends text, and points at WhatsApp for
+# pictures. Flip it to True the day an endpoint can take files — the picker,
+# its previews and the size guard are all written and wired already.
+FORM_ATTACH = False
+ATTACH_MAX_MB = 5
+ATTACH_MAX_N = 4
+
 L = {}
 
 # ================================================================ ENGLISH
@@ -58,7 +78,8 @@ L["en"] = {
         hoursMain="Mon–Fri 09:00–20:00", hoursSat="Sat 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Services"), ("petshop", "Pet Shop"),
-             ("installations", "Installations"), ("contact", "Contact")],
+             ("installations", "Installations"), ("contact", "Contact"),
+             ("partnership", "Partnership")],
         home="Home", checking="Checking hours…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
         hoursRow="Monday to Friday 09:00 – 20:00",
@@ -71,6 +92,15 @@ L["en"] = {
         socHead="Follow us", socSub="Photos from the clinic, news and opening notices",
         legalHead="Legal", legal=["Privacy Policy", "Cookies Policy", "Legal Notice"],
         copyright="© All rights reserved · Dr. Dobby · Fuengirola, España",
+        recOpen="Have a recommendation?",
+        recH="Have a recommendation?",
+        recSub="Feel free to share it with us — we read every message.",
+        recMsg="Your message", recMail="Your email",
+        recMailNote="So we can write back. Optional.",
+        recPhoto="Photos", recPhotoAdd="Add photos",
+        recPhotoNote="Up to %d photos, %d MB each.",
+        recWa="Or send photos on WhatsApp",
+        recSend="Send", recClose="Close",
     ),
     "home": dict(
         title="Dr. Dobby — Veterinary Clinic in Fuengirola",
@@ -191,6 +221,18 @@ L["en"] = {
         fName="Name", fMail="Email", fTel="Phone", fMsg="Comments",
         consent1="I accept the ", consentLink="Privacy Policy", send="Send",
     ),
+    "partnership": dict(
+        title="Partnership — Dr. Dobby, Fuengirola",
+        desc="Suppliers, shelters, breeders, groomers and other clinics — send a proposal to Dr. Dobby Veterinary Clinic in Fuengirola.",
+        eyebrow="Partnership",
+        h1="Working<br>together",
+        lede="Suppliers, shelters, breeders, groomers, other clinics — if you have a proposal, it reaches the clinic directly.",
+        partH="Send a proposal",
+        partSub="Tell us who you are and what you have in mind. Everything that arrives is read, and answered within a working day.",
+        partWays="Or write to us directly",
+        partName="Name or company", partMail="Email", partMsg="Your proposal",
+        partSend="Send proposal",
+    ),
 }
 
 # ================================================================ SPANISH
@@ -202,7 +244,8 @@ L["es"] = {
         hoursMain="Lun–Vie 09:00–20:00", hoursSat="Sáb 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Servicios"), ("petshop", "Tienda"),
-             ("installations", "Instalaciones"), ("contact", "Contacto")],
+             ("installations", "Instalaciones"), ("contact", "Contacto"),
+             ("partnership", "Colaboraciones")],
         home="Inicio", checking="Comprobando el horario…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
         hoursRow="Lunes a Viernes 09:00 – 20:00",
@@ -215,6 +258,15 @@ L["es"] = {
         socHead="Síguenos", socSub="Fotos de la clínica, novedades y avisos de horario",
         legalHead="Legal", legal=["Política de Privacidad", "Política de Cookies", "Aviso Legal"],
         copyright="© All rights reserved · Dr. Dobby · Fuengirola, España",
+        recOpen="¿Tienes una sugerencia?",
+        recH="¿Tienes una sugerencia?",
+        recSub="Compártela con nosotros — leemos todos los mensajes.",
+        recMsg="Tu mensaje", recMail="Tu email",
+        recMailNote="Para poder responderte. Opcional.",
+        recPhoto="Fotos", recPhotoAdd="Añadir fotos",
+        recPhotoNote="Hasta %d fotos, %d MB cada una.",
+        recWa="O envía las fotos por WhatsApp",
+        recSend="Enviar", recClose="Cerrar",
     ),
     "home": dict(
         title="Dr. Dobby — Clínica Veterinaria en Fuengirola",
@@ -336,6 +388,18 @@ L["es"] = {
         fName="Nombre", fMail="Email", fTel="Teléfono", fMsg="Comentarios",
         consent1="Aceptar la ", consentLink="política de privacidad", send="Enviar",
     ),
+    "partnership": dict(
+        title="Colaboraciones — Dr. Dobby, Fuengirola",
+        desc="Proveedores, protectoras, criadores, peluquerías y otras clínicas — envía tu propuesta a la Clínica Veterinaria Dr. Dobby en Fuengirola.",
+        eyebrow="Colaboraciones",
+        h1="Trabajemos<br>juntos",
+        lede="Proveedores, protectoras, criadores, peluquerías, otras clínicas — si tienes una propuesta, llega directamente a la clínica.",
+        partH="Envíanos tu propuesta",
+        partSub="Cuéntanos quién eres y qué tienes en mente. Leemos todo lo que llega y respondemos en un día laborable.",
+        partWays="O escríbenos directamente",
+        partName="Nombre o empresa", partMail="Email", partMsg="Tu propuesta",
+        partSend="Enviar propuesta",
+    ),
 }
 
 # ================================================================ RUSSIAN
@@ -347,7 +411,8 @@ L["ru"] = {
         hoursMain="Пн–Пт 09:00–20:00", hoursSat="Сб 10:30–13:30",
         addressLine="Avd. Nuestro Padre Jesús Cautivo 15, Fuengirola",
         nav=[("services", "Сервисы"), ("petshop", "Зоомагазин"),
-             ("installations", "Инфраструктура"), ("contact", "Контакты")],
+             ("installations", "Инфраструктура"), ("contact", "Контакты"),
+             ("partnership", "Партнёрство")],
         home="Главная", checking="Проверяем часы работы…",
         addrSub="Edf. Nely, Local 2, 29640 Fuengirola, Málaga",
         hoursRow="С понедельника по пятницу 09:00 – 20:00",
@@ -360,6 +425,15 @@ L["ru"] = {
         socHead="Мы в соцсетях", socSub="Фото из клиники, новости и изменения в графике",
         legalHead="Legal", legal=["Политика конфиденциальности", "Политика Cookies", "Правовая информация"],
         copyright="© All rights reserved · Dr. Dobby · Fuengirola, España",
+        recOpen="Есть пожелание?",
+        recH="Есть пожелание?",
+        recSub="Поделитесь с нами — мы читаем каждое сообщение.",
+        recMsg="Ваше сообщение", recMail="Ваш email",
+        recMailNote="Чтобы мы могли ответить. Необязательно.",
+        recPhoto="Фотографии", recPhotoAdd="Добавить фото",
+        recPhotoNote="До %d фото, по %d МБ.",
+        recWa="Или пришлите фото в WhatsApp",
+        recSend="Отправить", recClose="Закрыть",
     ),
     "home": dict(
         title="Dr. Dobby — ветеринарная клиника в Фуэнхироле",
@@ -481,6 +555,18 @@ L["ru"] = {
         fName="Имя", fMail="Email", fTel="Телефон", fMsg="Комментарий",
         consent1="Я принимаю ", consentLink="политику конфиденциальности", send="Отправить",
     ),
+    "partnership": dict(
+        title="Партнёрство — Dr. Dobby, Фуэнхирола",
+        desc="Поставщики, приюты, заводчики, груминг-салоны и другие клиники — отправьте предложение в ветеринарную клинику Dr. Dobby в Фуэнхироле.",
+        eyebrow="Партнёрство",
+        h1="Работаем<br>вместе",
+        lede="Поставщики, приюты, заводчики, груминг-салоны, другие клиники — если у вас есть предложение, оно придёт прямо в клинику.",
+        partH="Отправьте предложение",
+        partSub="Расскажите, кто вы и что предлагаете. Мы читаем всё, что приходит, и отвечаем в течение рабочего дня.",
+        partWays="Или напишите нам напрямую",
+        partName="Имя или компания", partMail="Email", partMsg="Ваше предложение",
+        partSend="Отправить предложение",
+    ),
 }
 
 
@@ -513,6 +599,69 @@ def stamp(name):
     if not name.endswith((".css", ".js")):
         return ""
     return "?v=" + hashlib.md5(pathlib.Path("assets", name).read_bytes()).hexdigest()[:8]
+
+
+
+def relay(subject):
+    """The hidden half of every form: who it goes to, and the bot trap.
+
+    These sit in the markup rather than in site.js so that a form still
+    delivers with JavaScript switched off — the browser posts it natively and
+    Web3Forms shows its own confirmation. With JS on, site.js intercepts the
+    same form and keeps the visitor on the page.
+
+    `botcheck` is Web3Forms' honeypot: hidden from people, filled in by the
+    kind of bot that walks a page filling every input, and any submission
+    carrying it is dropped before it becomes mail.
+    """
+    return f'''<input type="hidden" name="access_key" value="{FORM_KEY}">
+        <input type="hidden" name="subject" value="{subject}">
+        <input type="hidden" name="from_name" value="doctordobby.com">
+        <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">'''
+
+
+def recommend(lang):
+    """The recommendation window — bottom right of every page.
+
+    Closed it is one pill; open it is a small panel that does not take the
+    page over, so a visitor reading about vaccinations can send a thought
+    without losing their place. It is a non-modal dialog for that reason:
+    the page behind stays live, and Escape or the × puts focus back on the
+    pill it came from.
+    """
+    c = L[lang]["chrome"]
+
+    # The picker is written whole but only emitted when an endpoint can carry
+    # files; until then the WhatsApp line below is the route for pictures.
+    attach = f'''
+        <div class="field rec__attach">
+          <label for="r-pic">{c["recPhoto"]}</label>
+          <input id="r-pic" name="attachment" type="file" accept="image/*" multiple
+                 data-max-mb="{ATTACH_MAX_MB}" data-max-n="{ATTACH_MAX_N}">
+          <label class="rec__pick" for="r-pic"><svg aria-hidden="true"><use href="#i-clip"/></svg>{c["recPhotoAdd"]}</label>
+          <ul class="rec__files" id="recFiles"></ul>
+          <span class="field__note">{c["recPhotoNote"] % (ATTACH_MAX_N, ATTACH_MAX_MB)}</span>
+        </div>''' if FORM_ATTACH else ""
+
+    return f'''<div class="rec" id="rec">
+  <button class="rec__open" id="recOpen" type="button" aria-expanded="false" aria-controls="recPanel">
+    <svg aria-hidden="true"><use href="#i-chat"/></svg><span>{c["recOpen"]}</span>
+  </button>
+
+  <div class="rec__panel" id="recPanel" role="dialog" aria-labelledby="recTitle">
+    <button class="rec__x" id="recClose" type="button" aria-label="{c["recClose"]}"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+    <h2 id="recTitle">{c["recH"]}</h2>
+    <p>{c["recSub"]}</p>
+    <form class="rec__form" id="recForm" action="{FORM_ACTION}" method="POST" novalidate>
+        {relay("Recommendation from doctordobby.com")}
+        <div class="field"><label for="r-msg">{c["recMsg"]}</label><textarea id="r-msg" name="message" required></textarea></div>
+        <div class="field"><label for="r-mail">{c["recMail"]}</label><input id="r-mail" name="email" type="email" autocomplete="email" spellcheck="false"><span class="field__note">{c["recMailNote"]}</span></div>{attach}
+        <a class="rec__wa" href="{WHATSAPP}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>{c["recWa"]}</a>
+        <button class="btn btn--v" type="submit">{c["recSend"]}</button>
+        <p class="form__done" id="recNote" hidden role="status"></p>
+    </form>
+  </div>
+</div>'''
 
 
 def chrome(lang, key):
@@ -906,7 +1055,8 @@ def body_contact(lang):
         </div>
       </div>
 
-      <form class="form" id="form" data-reveal style="--d:120ms" novalidate>
+      <form class="form" id="form" action="{FORM_ACTION}" method="POST" data-reveal style="--d:120ms" novalidate>
+        {relay("Appointment request from doctordobby.com")}
         <h2>{d["formH"]}</h2>
         <p>{d["formSub"]}</p>
         <div class="field"><label for="f-name">{d["fName"]}</label><input id="f-name" name="name" autocomplete="name" required></div>
@@ -922,8 +1072,47 @@ def body_contact(lang):
 </section>'''
 
 
+
+def body_partnership(lang):
+    """A page of its own, next to Contact in the nav.
+
+    Same two halves as the contact page — the direct routes on one side, a
+    form on the other — but this one is addressed to suppliers and clinics
+    rather than to somebody with a sick animal, so it gets its own words and
+    stays out of the way of an owner trying to book an appointment.
+    """
+    d = L[lang]["partnership"]
+    return f'''{phead(lang, "partnership")}
+
+<section class="sec">
+  <div class="wrap">
+    <div class="partner" data-reveal>
+      <div>
+        <h2>{d["partH"]}</h2>
+        <p class="sec__note" style="margin-top:14px">{d["partSub"]}</p>
+        <p class="mono eyebrow" style="margin-top:30px">{d["partWays"]}</p>
+        <div class="partner__ways">
+          <a href="mailto:{MAIL_TO}"><svg aria-hidden="true"><use href="#i-mail"/></svg>{MAIL_TO}</a>
+          <a href="{WHATSAPP}" target="_blank" rel="noopener"><svg aria-hidden="true"><use href="#i-wa"/></svg>WhatsApp 622 653 515</a>
+        </div>
+      </div>
+
+      <form class="partner__form" id="partForm" action="{FORM_ACTION}" method="POST" novalidate>
+        {relay("Partnership proposal from doctordobby.com")}
+        <div class="field"><label for="p-name">{d["partName"]}</label><input id="p-name" name="name" autocomplete="organization" required></div>
+        <div class="field"><label for="p-mail">{d["partMail"]}</label><input id="p-mail" name="email" type="email" autocomplete="email" spellcheck="false" required></div>
+        <div class="field"><label for="p-msg">{d["partMsg"]}</label><textarea id="p-msg" name="message" required></textarea></div>
+        <button class="btn btn--v" type="submit">{d["partSend"]}</button>
+        <p class="form__done" id="partNote" hidden role="status"></p>
+      </form>
+    </div>
+  </div>
+</section>'''
+
+
 BODIES = {"home": body_home, "services": body_services, "petshop": body_petshop,
-          "installations": body_installations, "contact": body_contact}
+          "installations": body_installations, "contact": body_contact,
+          "partnership": body_partnership}
 
 
 def page(lang, key):
@@ -1003,6 +1192,8 @@ def page(lang, key):
 </main>
 
 {foot}
+
+{recommend(lang)}
 
 <script src="{asset(me, "site.js")}"></script>
 </body>
