@@ -53,8 +53,10 @@ WHATSAPP = "https://wa.me/34622653515"
 # delivery to that one address and nothing else, which is why it can sit in
 # the markup. Get one at web3forms.com — it arrives by email, no account.
 #
-# Until a real key is pasted in here, site.js falls back to the visitor's own
-# mail client, so a message is never silently dropped.
+# Until a real key is pasted in here, site.js hands the message to the visitor's
+# own mail app instead — MAIL_TO, the subject and every field already filled in,
+# and the same text on the clipboard in case no mail handler is registered. A
+# message is never silently dropped.
 MAIL_TO = "info@doctordobby.com"
 FORM_ACTION = "https://api.web3forms.com/submit"
 FORM_KEY = "REPLACE-WITH-WEB3FORMS-KEY"

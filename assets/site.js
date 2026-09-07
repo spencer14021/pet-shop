@@ -17,6 +17,8 @@
       sending: 'Sending…',
       sentOk: 'Thank you — your message is on its way.',
       sendFail: 'That did not go through. Try again, or write to us directly.',
+      mailReady: a => `Your mail app is opening with the whole message already written to ${a}. It is on your clipboard as well — nothing here is lost.`,
+      mailOnly: a => `Your mail app is opening with the whole message already written to ${a}. If nothing opened, copy the text and send it to that address.`,
       tooMany: n => `Up to ${n} photos, please.`,
       tooBig: mb => `Each photo has to be under ${mb} MB.`
     },
@@ -30,6 +32,8 @@
       sending: 'Enviando…',
       sentOk: 'Gracias — tu mensaje está en camino.',
       sendFail: 'No se ha podido enviar. Inténtalo otra vez o escríbenos directamente.',
+      mailReady: a => `Se está abriendo tu correo con el mensaje entero ya escrito a ${a}. También lo tienes en el portapapeles — aquí no se pierde nada.`,
+      mailOnly: a => `Se está abriendo tu correo con el mensaje entero ya escrito a ${a}. Si no se abre nada, copia el texto y envíalo a esa dirección.`,
       tooMany: n => `Máximo ${n} fotos, por favor.`,
       tooBig: mb => `Cada foto tiene que pesar menos de ${mb} MB.`
     },
@@ -43,6 +47,8 @@
       sending: 'Отправляем…',
       sentOk: 'Спасибо — ваше сообщение отправлено.',
       sendFail: 'Отправить не удалось. Попробуйте ещё раз или напишите нам напрямую.',
+      mailReady: a => `Открываем вашу почту — письмо на ${a} уже написано целиком. Текст скопирован и в буфер обмена, здесь ничего не потеряется.`,
+      mailOnly: a => `Открываем вашу почту — письмо на ${a} уже написано целиком. Если ничего не открылось, скопируйте текст и отправьте его на этот адрес.`,
       tooMany: n => `Не больше ${n} фото, пожалуйста.`,
       tooBig: mb => `Каждое фото должно быть меньше ${mb} МБ.`
     }
@@ -128,15 +134,66 @@
      here — the utility bar and the footer both carry it on every page. */
   const MAIL = (document.querySelector('a[href^="mailto:"]') || {}).href || '';
 
-  /* No access key pasted in yet. Rather than swallow what someone wrote,
-     hand it to their own mail client with the fields already filled in. */
+  /* Just the address, for the line we show afterwards. */
+  const ADDR = MAIL.replace(/^mailto:/, '').split('?')[0];
+
+  /* The plumbing of the relay: of no interest to a person reading the mail. */
   const HIDDEN = ['access_key', 'subject', 'from_name', 'botcheck', 'attachment'];
-  const mailFallback = form => {
+
+  /* Fields go into the mail under the label they were written under, so it
+     reads the way the form did rather than in input names. */
+  const labelled = form => {
     const data = new FormData(form);
-    const body = [...data.entries()]
+    return [...data.entries()]
       .filter(([k, v]) => !HIDDEN.includes(k) && typeof v === 'string' && v.trim())
-      .map(([k, v]) => `${k}: ${v}`).join('\n');
-    location.href = `${MAIL}?subject=${encodeURIComponent(data.get('subject') || '')}` +
+      .map(([k, v]) => {
+        const el = form.elements[k];
+        const lab = el && el.closest && el.closest('.field')
+          ? el.closest('.field').querySelector('label') : null;
+        return `${lab ? lab.textContent.trim() : k}: ${v.trim()}`;
+      }).join('\n');
+  };
+
+  /* The clipboard proper is https-only and not everywhere even then, so the
+     old selection trick stays behind it — this site is just as likely to be
+     opened off a file:// path. Focus goes back where it was either way. */
+  const copy = text => {
+    if (navigator.clipboard && isSecureContext) return navigator.clipboard.writeText(text);
+    return new Promise((ok, no) => {
+      const was = document.activeElement;
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.readOnly = true;
+      ta.style.cssText = 'position:fixed;top:-1000px;opacity:0';
+      document.body.appendChild(ta);
+      ta.select();
+      let done = false;
+      try { done = document.execCommand('copy'); } catch (err) { done = false; }
+      ta.remove();
+      if (was && was.focus) was.focus({ preventScroll: true });
+      done ? ok() : no(new Error('clipboard refused'));
+    });
+  };
+
+  /* No access key pasted in yet. Rather than swallow what someone wrote, hand
+     the whole thing to the visitor's own mail app: the clinic's address, the
+     subject and every field already in place, so there is nothing left to
+     type. The same text goes on the clipboard in the same breath — a browser
+     with no mail handler registered opens nothing at all, and this way the
+     message is still one paste away instead of gone. The form is deliberately
+     left as it was for the same reason. */
+  const mailFallback = (form, say) => {
+    const subject = form.elements.subject ? form.elements.subject.value : document.title;
+    const body = labelled(form);
+
+    /* Started before the handoff, while the click that asked for it is still
+       the browser's idea of the current gesture. */
+    copy(`${subject}\n\n${body}`).then(
+      () => say(T.mailReady(ADDR)),
+      () => say(T.mailOnly(ADDR))
+    );
+
+    location.href = `${MAIL}?subject=${encodeURIComponent(subject)}` +
                     `&body=${encodeURIComponent(body)}`;
   };
 
@@ -163,7 +220,7 @@
       }
 
       const key = form.elements.access_key ? form.elements.access_key.value : '';
-      if (MAIL && (!key || key.startsWith('REPLACE'))) { mailFallback(form); return; }
+      if (MAIL && (!key || key.startsWith('REPLACE'))) { mailFallback(form, say); return; }
 
       say(T.sending);
       form.classList.add('is-sending');
