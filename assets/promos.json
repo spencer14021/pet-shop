@@ -2,62 +2,31 @@
   "promos": [
     {
       "id": "pmttvv09o",
-      "active": false,
-      "from": "",
-      "to": "",
-      "link": "page:contact",
-      "mt": {
-        "en": "1lwmfsu",
-        "es": "1lwmfsu"
-      },
-      "text": {
-        "ru": {
-          "tag": "Скидка",
-          "title": "Читска шерсти",
-          "body": "Запишись на чистку шерсти со скидкой 20%",
-          "cta": ""
-        },
-        "en": {
-          "tag": "Discount",
-          "title": "Chitska Wool",
-          "body": "Sign up for wool cleaning with a 20% discount",
-          "cta": ""
-        },
-        "es": {
-          "tag": "Descuento",
-          "title": "Lana Chitska",
-          "body": "Regístrate para limpiar la lana con un 20% de descuento",
-          "cta": ""
-        }
-      }
-    },
-    {
-      "id": "pmttw98za",
       "active": true,
       "from": "",
       "to": "",
       "link": "page:contact",
       "mt": {
-        "en": "1rqd6ad",
-        "es": "1rqd6ad"
+        "en": "1hqgjhp",
+        "es": "1hqgjhp"
       },
       "text": {
         "ru": {
-          "tag": "Скидки",
-          "title": "Осенный chek-up",
-          "body": "Осень",
+          "tag": "Скидка",
+          "title": "Тут будут видны ежемесячные акции",
+          "body": "Пока никаких скидок нету",
           "cta": ""
         },
         "en": {
-          "tag": "Discounts",
-          "title": "Autumn check-up",
-          "body": "Autumn",
+          "tag": "Discount",
+          "title": "Monthly promotions will be visible here",
+          "body": "No discounts yet",
           "cta": ""
         },
         "es": {
-          "tag": "Descuentos",
-          "title": "Chek-up de otoño",
-          "body": "Otoño",
+          "tag": "Descuento",
+          "title": "Las promociones mensuales estarán visibles aquí",
+          "body": "Aún no hay descuentos",
           "cta": ""
         }
       }
