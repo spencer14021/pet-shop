@@ -1,0 +1,965 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Акции — Dr. Dobby</title>
+
+<!-- Панель ничего не знает о домене: и данные, и стили сайта она ищет
+     рядом с собой, поэтому папку admin/ можно перенести вместе с сайтом
+     куда угодно — на другой хостинг, другой домен или в подпапку. -->
+<style>
+:root{
+  --ink:#14101a; --muted:#6f6878; --line:rgba(20,16,26,.13);
+  --violet:#a24eea; --violet-700:#7b2fc4; --violet-900:#3d1668;
+  --peach:#f8b07c; --sand:#fdf4ec; --paper:#fff;
+  --ok:#2f7d54; --bad:#c0334a;
+  --ease:cubic-bezier(.22,.68,.28,1);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#f5f1f7;color:var(--ink);line-height:1.55;font-size:15.5px;
+  font-family:"Onest",system-ui,-apple-system,"Segoe UI",sans-serif;-webkit-font-smoothing:antialiased;
+  padding-bottom:96px}
+button,input,textarea,select{font:inherit;color:inherit}
+img{display:block;max-width:100%}
+.wrap{width:min(940px,100%);margin-inline:auto;padding-inline:clamp(14px,3vw,28px)}
+.mono{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.14em;
+  text-transform:uppercase;font-weight:500;color:var(--muted)}
+:where(a,button,input,textarea,select):focus-visible{outline:2px solid var(--violet);outline-offset:2px;border-radius:4px}
+
+/* ---------- шапка ---------- */
+.top{background:var(--ink);color:#fff;padding-block:16px}
+.top__in{display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.top img{height:34px;width:auto}
+.top h1{font-size:19px;font-weight:700;letter-spacing:-.01em;margin-right:auto}
+.chip{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 13px;
+  font-size:12.5px;font-weight:600;background:rgba(255,255,255,.1);color:rgba(255,255,255,.8)}
+.chip b{width:8px;height:8px;border-radius:50%;background:currentColor;flex:none}
+.chip.is-ok{color:#8fe0b0} .chip.is-warn{color:var(--peach)}
+
+/* ---------- карточка акции ---------- */
+.list{display:flex;flex-direction:column;gap:18px;margin-top:24px}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px 20px 22px;
+  box-shadow:0 18px 40px -34px rgba(61,22,104,.6)}
+.card.is-off{background:#fbfafc}
+.card.is-off .card__body{opacity:.6}
+.card__top{display:flex;align-items:center;gap:12px;flex-wrap:wrap;
+  padding-bottom:16px;border-bottom:1px solid var(--line)}
+.card__ops{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap}
+.card__when{font-size:12.5px;color:var(--muted)}
+.card__when.is-live{color:var(--ok);font-weight:600}
+.card__when.is-past{color:var(--bad)}
+
+.switch{display:inline-flex;align-items:center;gap:10px;cursor:pointer;font-weight:600;font-size:14.5px}
+.switch input{position:absolute;opacity:0;width:0;height:0}
+.switch i{width:40px;height:23px;border-radius:999px;background:#d6d0dd;flex:none;position:relative;
+  transition:background .22s var(--ease)}
+.switch i::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;
+  background:#fff;box-shadow:0 2px 5px rgba(0,0,0,.25);transition:transform .22s var(--ease)}
+.switch input:checked+i{background:var(--violet)}
+.switch input:checked+i::after{transform:translateX(17px)}
+.switch input:focus-visible+i{outline:2px solid var(--violet);outline-offset:2px}
+.switch input:disabled+i{opacity:.45}
+.switch:has(input:disabled){cursor:not-allowed;color:var(--muted)}
+
+/* ---------- поля ---------- */
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-top:18px}
+.f{display:block}
+.f>span{display:block;margin-bottom:6px}
+.f input,.f textarea,.f select{width:100%;padding:10px 12px;background:var(--sand);
+  border:1.5px solid var(--line);border-radius:10px;transition:border-color .2s var(--ease),background .2s}
+.f input:focus,.f textarea:focus{outline:none;border-color:var(--violet);background:var(--paper)}
+.f textarea{min-height:104px;resize:vertical;line-height:1.5}
+.f small{display:block;margin-top:5px;font-size:12px;color:var(--muted)}
+.f[hidden]{display:none}
+.f.is-bad input,.f.is-bad textarea{border-color:var(--bad);background:#fff6f7}
+
+/* ---------- языки ---------- */
+.tabs{display:flex;gap:6px;margin-top:22px;border-bottom:1px solid var(--line);padding-bottom:0}
+.tabs button{background:none;border:0;cursor:pointer;padding:9px 14px;border-radius:10px 10px 0 0;
+  font-weight:600;font-size:13.5px;color:var(--muted);border-bottom:2px solid transparent}
+.tabs button[aria-selected=true]{color:var(--violet-900);border-bottom-color:var(--violet);background:var(--sand)}
+.tabs button .dot{color:var(--peach);font-weight:700}
+.pane{padding-top:16px}
+.pane[hidden]{display:none}
+.card__gaps{display:block;margin-top:16px;font-size:12.5px;color:var(--muted)}
+.card__gaps.is-warn{color:#8a5720;font-weight:600}
+
+/* ---------- кнопки ---------- */
+.btn{display:inline-flex;align-items:center;gap:8px;cursor:pointer;border:0;border-radius:999px;
+  font-weight:600;font-size:14px;padding:10px 18px;text-decoration:none;
+  transition:transform .2s var(--ease),background .2s var(--ease),box-shadow .2s var(--ease)}
+.btn:active{transform:translateY(1px)}
+.btn--v{background:var(--violet);color:#fff;box-shadow:0 12px 26px -16px var(--violet-700)}
+.btn--v:hover{background:var(--violet-700)}
+.btn--v[disabled]{background:#c9c2d2;box-shadow:none;cursor:not-allowed}
+.btn--ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--line)}
+.btn--ghost:hover{box-shadow:inset 0 0 0 1.5px var(--violet);color:var(--violet-700)}
+.btn--sm{padding:7px 13px;font-size:13px}
+.btn[hidden]{display:none}      /* .btn's own display outranks [hidden] */
+.btn--bad{color:var(--bad)}
+.btn--bad:hover{box-shadow:inset 0 0 0 1.5px var(--bad);color:var(--bad)}
+
+/* ---------- предпросмотр ---------- */
+.prev{width:100%;border:1px solid var(--line);border-radius:14px;margin-top:16px;background:var(--sand);
+  min-height:220px;display:block}
+.prev[hidden]{display:none}
+
+/* ---------- нижняя панель ---------- */
+.bar{position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(255,255,255,.96);
+  backdrop-filter:blur(8px);border-top:1px solid var(--line);padding-block:12px;
+  box-shadow:0 -14px 34px -28px rgba(61,22,104,.8)}
+.bar__in{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.bar input[type=password]{width:190px;padding:9px 12px;background:var(--sand);
+  border:1.5px solid var(--line);border-radius:10px}
+/* Окно на сайте показывается раз и молчит до следующей правки; эти три
+   ссылки открывают его принудительно — чтобы проверить, что написано. */
+.look{display:flex;align-items:center;gap:8px;margin-left:14px;font-size:12.5px;color:var(--muted)}
+.look a{color:var(--violet-700);font-weight:600;text-decoration:none;
+  padding:4px 8px;border-radius:8px;background:var(--sand)}
+.look a:hover{background:var(--peach-100, #fde7d3);color:var(--violet-900)}
+.say{font-size:13.5px;margin-left:auto;text-align:right}
+.say.is-ok{color:var(--ok);font-weight:600}
+.say.is-bad{color:var(--bad);font-weight:600}
+
+/* ---------- прочее ---------- */
+.sec{margin-top:34px}
+.sec>h2{font-size:17px;font-weight:700;letter-spacing:-.01em}
+.sec>p{color:var(--muted);font-size:14px;margin-top:6px;max-width:64ch}
+.box{background:var(--paper);border:1px solid var(--line);border-radius:18px;padding:20px;margin-top:14px}
+.help summary{cursor:pointer;font-weight:600;padding:14px 0}
+.help h3{font-size:15px;margin-top:18px}
+.help p,.help li{color:var(--muted);font-size:14px;margin-top:7px}
+.help ol,.help ul{padding-left:20px}
+.help code{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:12.5px;
+  background:var(--sand);padding:2px 6px;border-radius:6px;color:var(--violet-900)}
+.empty{text-align:center;color:var(--muted);padding:38px 20px}
+
+/* Что увидит посетитель прямо сейчас — единственный ответ, который трудно
+   собрать в голове из галочек и двух дат, поэтому он написан словами. */
+.live{display:flex;align-items:center;gap:10px;margin-top:16px;padding:12px 16px;
+  border-radius:14px;font-size:14px;font-weight:600}
+.live::before{content:"";width:9px;height:9px;border-radius:50%;background:currentColor;flex:none}
+.live.is-on{background:#e9f7ef;color:#2f7d54}
+.live.is-off{background:#fff4e5;color:#8a5720}
+.live.is-wait{background:#f1ecfa;color:#5b2a92}
+@media(max-width:560px){
+  .card__ops{width:100%;margin-left:0}
+  .say{width:100%;text-align:left;margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div class="top">
+  <div class="wrap top__in">
+    <img src="../assets/logo.png" alt="Dr. Dobby" width="371" height="156">
+    <h1>Акции</h1>
+    <span class="chip" id="mode"><b></b><span>проверяем хостинг…</span></span>
+  </div>
+</div>
+
+<main class="wrap">
+
+  <div class="sec">
+    <h2>Всплывающее окно на сайте</h2>
+    <p>Здесь вы пишете акцию — и на сайте появляется значок «%»: кружок в углу
+       страницы и строка в меню, рядом с «Партнёрством». Окно с акцией
+       открывается по нему, само оно посетителю не мешает.</p>
+    <p><b>Показывается одна акция.</b> Пока одна включена, остальные включить
+       нельзя: выключите ту, что работает, и включайте другую. Держать в списке
+       можно сколько угодно — выключенные просто ждут своей очереди.</p>
+    <p class="live" id="live"></p>
+  </div>
+
+  <div class="list" id="list"></div>
+
+  <div class="sec">
+    <button class="btn btn--ghost" id="add">+ Добавить акцию</button>
+  </div>
+
+  <details class="sec help box">
+    <summary>Как это работает и как перенести на другой домен</summary>
+
+    <h3>Где лежат акции</h3>
+    <p>Всё, что вы здесь написали, хранится в одном файле — <code>assets/promos.json</code>.
+       Страницы сайта не меняются: они читают этот файл при загрузке.</p>
+
+    <h3>Как сохранить</h3>
+    <ol>
+      <li><b>Если внизу есть поле пароля</b> — на хостинге работает PHP. Введите пароль
+          и нажмите «Сохранить на сайт»: файл перезапишется сам, а прошлая версия
+          останется рядом как <code>assets/promos.backup.json</code>.</li>
+      <li><b>Если поля пароля нет</b> — хостинг отдаёт только файлы. Нажмите
+          «Скачать promos.json» и положите скачанный файл в папку <code>assets/</code>
+          через файловый менеджер хостинга или по FTP, заменив старый.</li>
+    </ol>
+
+    <h3>Пароль</h3>
+    <p>Задаётся один раз, на хостинге. Проще всего положить рядом с
+       <code>save.php</code> файл <code>admin/password.php</code> с одной строкой:
+       <code>&lt;?php return 'ваш-пароль';</code> — этот файл не хранится в
+       репозитории, поэтому пароль никуда не уезжает вместе с кодом. Можно и
+       просто вписать его в <code>admin/save.php</code>. Пока пароль не задан,
+       панель ничего не запишет.</p>
+
+    <h3>Три языка и перевод</h3>
+    <p>Окно всегда говорит на языке страницы: русский текст на английской
+       странице человеку не поможет. Поэтому пустой язык не показывается вовсе —
+       и поэтому пустые языки заполняются переводом.</p>
+    <p>Пишите на одном языке — русском. Остальные два заполняются переводом
+       сами, когда вы сохраняете; кнопка «Перевести» делает то же самое сразу.
+       Если потом поправить русский текст, перевод обновится вместе с ним. А
+       если вы впишете английский текст своей рукой, панель его больше не
+       тронет — только спросит, если вы сами нажмёте «Перевести». Перевод машинный, он появляется прямо в
+       полях — прочитайте и поправьте, если нужно. Текст уходит на бесплатный
+       <code>api.mymemory.translated.net</code>; если сервис недоступен, панель
+       скажет об этом и сохранит как есть.</p>
+
+    <h3>Одна акция за раз</h3>
+    <p>На сайте показывается одна акция, поэтому включённой может быть только
+       одна: пока она работает, переключатели остальных заперты. Чтобы поменять
+       акцию — выключите текущую, включите нужную и сохраните. Старые акции
+       можно не удалять: выключенная лежит в списке и ждёт, пока понадобится
+       снова.</p>
+
+    <h3>Как акцию видит посетитель</h3>
+    <p>Само окно не всплывает. На странице появляется значок «%» — кружок в
+       нижнем углу и строка в меню, подписанные вашей плашкой; окно
+       открывается, когда на него нажмут, и столько раз, сколько нажмут.</p>
+    <p>Три ссылки внизу панели («Открыть сайт с окном») добавляют к адресу
+       <code>?promo</code> и открывают окно сразу — чтобы вам не искать значок,
+       когда нужно просто проверить текст.</p>
+
+    <h3>Кнопка в окне</h3>
+    <p>Выберите страницу из списка — сайт сам откроет её на языке посетителя:
+       русскому покажет <code>ru/kontakty/</code>, испанцу <code>es/contacto/</code>.
+       «Своя ссылка» нужна для адресов вне сайта, например
+       <code>https://wa.me/34622653515</code> — такая откроется в новой вкладке.
+       «Без кнопки» — окно будет только с текстом.</p>
+
+    <h3>Переезд на другой домен</h3>
+    <p>Ничего перенастраивать не нужно. Ни панель, ни сайт, ни этот файл акций
+       не знают адреса сайта: все пути считаются относительно самих файлов.
+       Скопируйте папку сайта целиком на новый хостинг — панель откроется по адресу
+       <code>ваш-домен/admin/</code> и подхватит те же акции. Так же она работает
+       и в подпапке, например <code>ваш-домен/dobby/admin/</code>.</p>
+    <p>Единственное место с адресом сайта — строка <code>SITE_URL</code> в
+       <code>build/build-pages.py</code>: она нужна только для карточки организации
+       в поиске Google. Поменяйте её и пересоберите страницы.</p>
+
+    <h3>Если на хостинге нет PHP</h3>
+    <p>Файл <code>admin/save.php</code> тогда не выполняется, и его исходный текст
+       может быть виден по прямой ссылке — вместе с паролем. Пароль в этом случае
+       ни на что не влияет (записывать всё равно нечем), но если это неприятно,
+       просто не загружайте <code>save.php</code> на такой хостинг:
+       панель сразу перейдёт в режим скачивания файла.</p>
+  </details>
+
+</main>
+
+<div class="bar">
+  <div class="wrap bar__in">
+    <input type="password" id="pass" placeholder="Пароль" autocomplete="current-password" hidden>
+    <button class="btn btn--v" id="save" hidden>Сохранить на сайт</button>
+    <button class="btn btn--ghost" id="download">Скачать promos.json</button>
+    <button class="btn btn--ghost" id="openBtn">Открыть файл…</button>
+    <input type="file" id="open" accept=".json,application/json" hidden>
+    <span class="look">Открыть сайт с окном:
+      <a href="../ru/?promo" target="_blank" rel="noopener">RU</a>
+      <a href="../?promo" target="_blank" rel="noopener">EN</a>
+      <a href="../es/?promo" target="_blank" rel="noopener">ES</a>
+    </span>
+    <span class="say" id="say"></span>
+  </div>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  /* Корень сайта — на уровень выше этой панели. Отсюда берутся и данные, и
+     стили сайта для предпросмотра; домен нигде не участвует, поэтому всё
+     переносится на любой хостинг как есть. */
+  const ROOT = new URL('../', location.href);
+  const DATA = new URL('assets/promos.json', ROOT).href;
+  const CSS  = new URL('assets/site.css', ROOT).href;
+
+  const LANGS = [['ru', 'Русский'], ['en', 'English'], ['es', 'Español']];
+
+  /* Те же два набора шрифтов, что у страниц сайта: у русской страницы своя
+     пара — кириллицы в остальных нет. Предпросмотр без них показывал бы
+     окно не тем шрифтом, каким его увидит посетитель. */
+  const FONTS = {
+    latin: 'https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap',
+    ru: 'https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap'
+  };
+  const FIELDS = [
+    ['tag',   'Плашка над заголовком', 'Скидки',        'input',    'Её видно на сайте — маленькая надпись над заголовком акции, и ею же подписан значок «%» в меню. Одно-два слова: «Скидки», «Акция месяца», «Только в сентябре». Можно оставить пустой.'],
+    ['title', 'Заголовок',       'Осенний check-up…',   'input',    'Без него акция не покажется.'],
+    ['body',  'Текст',           '',                    'textarea', 'Пустая строка между абзацами разделит их в окне.'],
+    ['cta',   'Надпись на кнопке','Записаться',         'input',    'Пустая — кнопки не будет.']
+  ];
+
+  /* Куда может вести кнопка. Названные страницы сайт открывает на языке
+     посетителя сам — одна акция обслуживает все три языка, и путь вроде
+     contact/ увёл бы русского читателя на английскую страницу. Список тот
+     же, что PAGES в assets/site.js. */
+  const PAGE_OPTS = [
+    ['',                   '— без кнопки —'],
+    ['page:contact',       'Контакты'],
+    ['page:services',      'Сервисы'],
+    ['page:petshop',       'Зоомагазин'],
+    ['page:installations', 'Инфраструктура'],
+    ['page:partnership',   'Партнёрство'],
+    ['page:home',          'Главная'],
+    ['custom',             'Своя ссылка…']
+  ];
+
+  /* Перевод пустых языков. Делается здесь, один раз, при сохранении — а не
+     на сайте у посетителя: в файл ложатся все три языка, сайт остаётся
+     статичным и ни от какого сервиса не зависит. Текст уходит на
+     api.mymemory.translated.net (бесплатно, без ключа); это рекламный текст,
+     ничего личного в нём нет. Перевод машинный — его видно в полях, и его
+     можно поправить руками перед сохранением. */
+  const MT = 'https://api.mymemory.translated.net/get';
+
+  /* Сервис берёт около 500 знаков за раз, поэтому длинный текст режется по
+     предложениям, а абзацы сохраняются как были. */
+  const slice = (para, max = 450) => {
+    if (para.length <= max) return [para];
+    const out = [];
+    let cur = '';
+    para.split(/(?<=[.!?…])\s+/).forEach(sentence => {
+      if ((cur + ' ' + sentence).trim().length > max) {
+        if (cur) out.push(cur.trim());
+        cur = sentence;
+      } else {
+        cur = (cur ? cur + ' ' : '') + sentence;
+      }
+    });
+    if (cur.trim()) out.push(cur.trim());
+    return out;
+  };
+
+  const translate = async (text, from, to) => {
+    const paras = [];
+    for (const para of String(text).split(/\n\s*\n/)) {
+      if (!para.trim()) continue;
+      const done = [];
+      for (const part of slice(para.trim())) {
+        const r = await fetch(MT + '?q=' + encodeURIComponent(part) + '&langpair=' + from + '|' + to)
+          .then(res => res.json());
+        const got = r && r.responseData && r.responseData.translatedText;
+        if (!got || /MYMEMORY WARNING|QUERY LENGTH|INVALID/i.test(got)) throw new Error('сервис перевода не ответил');
+        done.push(got);
+        await new Promise(r2 => setTimeout(r2, 120));      // не частим
+      }
+      paras.push(done.join(' '));
+    }
+    return paras.join('\n\n');
+  };
+
+  /* Отпечаток текста, с которого переводили. Лежит в акции как `mt`, по
+     отпечатку на язык: он и отличает «перевод, который панель сделала сама»
+     от «текста, который человек написал руками». */
+  const fingerprint = t => {
+    const text = FIELDS.map(([k]) => (t[k] || '')).join('\u0000');
+    let h = 0;
+    for (let i = 0; i < text.length; i++) h = (h * 31 + text.charCodeAt(i)) | 0;
+    return (h >>> 0).toString(36);
+  };
+
+  /* Язык, с которого переводим: первый заполненный, который панель не
+     переводила сама. Обычно русский — тот, на котором пишут. */
+  const sourceOf = p => LANGS.map(([c]) => c)
+    .find(c => ((p.text[c] || {}).title || '').trim() && !(p.mt || {})[c]);
+
+  /* Переводит пустые языки и обновляет свои же прошлые переводы, когда
+     исходный текст изменился. Написанное руками не трогает никогда — только
+     по прямой просьбе (`over`). */
+  const fillGaps = async (p, over) => {
+    const from = sourceOf(p);
+    if (!from) return [];
+    const mark = fingerprint(p.text[from]);
+    p.mt = p.mt || {};
+    const filled = [];
+    for (const [to, name] of LANGS) {
+      if (to === from) continue;
+      const has = ((p.text[to] || {}).title || '').trim();
+      const mine = p.mt[to];                       // это мой прошлый перевод
+      const stale = mine && mine !== mark;         // а исходник с тех пор изменился
+      if (!over && has && !stale) continue;        // чужой текст — не трогаем
+      if (over || stale || !has) FIELDS.forEach(([key]) => { p.text[to][key] = ''; });
+      /* Четыре поля одного языка идут разом: сервис отвечает за секунду с
+         лишним, и ждать их по очереди — это десяток секунд на пустом месте.
+         Языки всё же по очереди, чтобы не выглядеть наплывом запросов. */
+      await Promise.all(FIELDS.map(async ([key]) => {
+        const src = (p.text[from][key] || '').trim();
+        if (!src || (p.text[to][key] || '').trim()) return;
+        p.text[to][key] = await translate(src, from, to);
+      }));
+      p.mt[to] = mark;
+      filled.push(name);
+    }
+    return filled;
+  };
+
+  const $ = s => document.querySelector(s);
+  const el = (tag, cls, text) => {
+    const n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  };
+
+  let doc = { promos: [] };
+  /* Копия последнего, что было прочитано с сайта или записано на него: без
+     неё панель не может отличить «выключено у меня» от «выключено там». */
+  let live = { promos: [] };
+  let php = null;                    // null — ещё не знаем, false — PHP нет
+  let dirty = false;
+
+  /* Та же проверка, что делает сайт: включена, срок идёт, заголовок есть.
+     «Включена» само по себе ничего не значит — пустая акция не показывается
+     и никому не мешает. */
+  const shows = p => p.active
+    && (!p.from || p.from <= today()) && (!p.to || p.to >= today())
+    && LANGS.some(([c]) => ((p.text[c] || {}).title || '').trim());
+
+  const onAir = which => (which.promos || []).find(shows);
+
+  const titleOf = p => LANGS.map(([c]) => ((p.text[c] || {}).title || '').trim()).find(Boolean);
+
+  /* Строка говорит про сайт, а не про эти поля. Пока не нажата кнопка
+     сохранения, посетитель видит старое — выключенный на экране переключатель
+     ничего на сайте не выключает, и это здесь сказано словами. */
+  const paintLive = () => {
+    const now = onAir(live);
+    const next = onAir(doc);
+    const n = $('#live');
+    n.className = 'live ' + (dirty ? 'is-wait' : now ? 'is-on' : 'is-off');
+    n.textContent = (now
+      ? 'Сейчас на сайте значок с акцией: «' + titleOf(now) + '».'
+      : 'Сейчас на сайте значка с акцией нет.')
+      + (dirty
+        ? ' Изменения не сохранены — после «Сохранить на сайт» будет: '
+          + (next ? '«' + titleOf(next) + '».' : 'ничего.')
+        : '');
+  };
+
+  const say = (text, kind) => {
+    const n = $('#say');
+    n.textContent = text;
+    n.className = 'say' + (kind ? ' is-' + kind : '');
+  };
+  const touch = () => { dirty = true; paintLive(); say('Есть несохранённые изменения.'); };
+
+  /* Включённой: акцию заводят, чтобы её показать, а выключатель — первое,
+     что есть на карточке. На сайт всё равно ничего не уйдёт, пока не нажата
+     кнопка сохранения. */
+  const blank = () => ({
+    id: 'p' + Date.now().toString(36),
+    active: true, from: '', to: '', link: 'page:contact',
+    text: Object.fromEntries(LANGS.map(([c]) => [c, { tag: '', title: '', body: '', cta: '' }]))
+  });
+
+  /* ------------------------------------------------ сроки, как их видит сайт */
+  const today = () => new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit'
+  }).format(new Date());
+
+  const when = p => {
+    const day = today();
+    if (!p.active) return ['выключена', ''];
+    if (p.from && p.from > day) return ['начнётся ' + human(p.from), ''];
+    if (p.to && p.to < day) return ['срок закончился ' + human(p.to), 'is-past'];
+    const till = p.to ? ' — до ' + human(p.to) : ' — без срока';
+    return ['идёт сейчас' + till, 'is-live'];
+  };
+  const human = iso => {
+    const [y, m, d] = iso.split('-');
+    return d + '.' + m + '.' + y;
+  };
+
+  /* ------------------------------------------------ карточка */
+  function card(p, i) {
+    const box = el('article', 'card' + (p.active ? '' : ' is-off'));
+    box.dataset.id = p.id;
+
+    const top = el('div', 'card__top');
+    const sw = el('label', 'switch');
+    const on = el('input');
+    on.type = 'checkbox';
+    on.checked = !!p.active;
+
+    /* На сайте показывается одна акция. Значит и включать имеет смысл одну:
+       вторая всё равно не показалась бы, а выглядела бы включённой. Пока одна
+       работает, остальные переключатели заперты.
+
+       Заперты именно теми, кто действительно показывается: пустая акция или
+       акция с прошедшим сроком на сайте не видна и держать остальные не
+       должна — иначе забытая пустая карточка запирает всю панель. */
+    const busy = doc.promos.find(x => x !== p && shows(x));
+    if (!p.active && busy) {
+      on.disabled = true;
+      sw.title = 'Сейчас показывается другая акция — сначала выключите её';
+    }
+
+    on.addEventListener('change', () => {
+      p.active = on.checked;
+      touch();
+      render();                       // остальные переключатели меняют состояние
+    });
+    sw.append(on, el('i'), el('span', null, 'Показывать на сайте'));
+
+    const [label, cls] = when(p);
+    const state = el('span', 'card__when ' + cls,
+      on.disabled ? 'выключена — показывается другая' : label);
+
+    const ops = el('div', 'card__ops');
+    const op = (text, cls2, fn) => {
+      const b = el('button', 'btn btn--ghost btn--sm' + (cls2 || ''), text);
+      b.type = 'button';
+      b.addEventListener('click', fn);
+      return b;
+    };
+    const up = op('↑', '', () => move(i, -1));
+    const down = op('↓', '', () => move(i, 1));
+    up.disabled = i === 0;
+    down.disabled = i === doc.promos.length - 1;
+    up.title = 'Выше по списку';
+    down.title = 'Ниже по списку';
+    const tr = op('Перевести', '', async () => {
+      /* Спрашиваем только о том, что писали руками: свой прошлый перевод
+         панель обновляет молча, на то он и перевод. */
+      const from = sourceOf(p);
+      const byHand = LANGS.filter(([c]) => c !== from
+        && ((p.text[c] || {}).title || '').trim() && !(p.mt || {})[c]);
+      const over = byHand.length > 0 && window.confirm(
+        byHand.map(([, n]) => n).join(' и ') + ' написаны не переводом. Заменить их переводом?');
+      if (byHand.length && !over) return;
+
+      tr.disabled = true;
+      const was = tr.textContent;
+      tr.textContent = 'Переводим…';
+      say('Переводим пустые языки…');
+      try {
+        const filled = await fillGaps(p, over);
+        touch();
+        render();
+        say(filled.length
+          ? 'Перевели: ' + filled.join(', ') + '. Проверьте текст и сохраните.'
+          : 'Переводить нечего — языки уже заполнены.', 'ok');
+      } catch (err) {
+        tr.disabled = false;
+        tr.textContent = was;
+        say('Не удалось перевести: ' + err.message + '. Впишите текст сами.', 'bad');
+      }
+    });
+    tr.title = 'Заполнить пустые языки переводом с заполненного';
+
+    ops.append(up, down, tr, op('Предпросмотр', '', () => preview(p, box)), op('Удалить', ' btn--bad', () => {
+      if (!confirmDelete(p)) return;
+      doc.promos.splice(i, 1);
+      touch();
+      render();
+    }));
+
+    top.append(sw, state, ops);
+
+    /* --- общие поля --- */
+    const body = el('div', 'card__body');
+    const grid = el('div', 'grid');
+    const line = (key, title, type, hint, placeholder) => {
+      const f = el('label', 'f');
+      f.append(el('span', 'mono', title));
+      const inp = el('input');
+      inp.type = type;
+      inp.value = p[key] || '';
+      if (placeholder) inp.placeholder = placeholder;
+      inp.addEventListener('input', () => {
+        p[key] = inp.value.trim();
+        if (key === 'from' || key === 'to') {
+          state.textContent = when(p)[0];
+          state.className = 'card__when ' + when(p)[1];
+        }
+        touch();
+      });
+      f.append(inp);
+      if (hint) f.append(el('small', null, hint));
+      return f;
+    };
+    /* Кнопка окна: страница из списка — или свой адрес, если нужен WhatsApp
+       или что-то ещё за пределами сайта. */
+    const linkField = () => {
+      const wrap = el('div');
+      const f = el('label', 'f');
+      f.append(el('span', 'mono', 'Кнопка ведёт на'));
+      const sel = el('select');
+      PAGE_OPTS.forEach(([value, title]) => {
+        const o = el('option', null, title);
+        o.value = value;
+        sel.append(o);
+      });
+      const named = PAGE_OPTS.some(([v]) => v && v === p.link);
+      sel.value = p.link ? (named ? p.link : 'custom') : '';
+      f.append(sel, el('small', null, 'Страница откроется на языке посетителя.'));
+
+      const own = el('label', 'f');
+      own.style.marginTop = '12px';
+      own.append(el('span', 'mono', 'Своя ссылка'));
+      const inp = el('input');
+      inp.type = 'text';
+      inp.placeholder = 'https://wa.me/34622653515';
+      inp.value = sel.value === 'custom' ? p.link : '';
+      own.append(inp, el('small', null, 'Полный адрес или путь от корня сайта.'));
+      own.hidden = sel.value !== 'custom';
+
+      sel.addEventListener('change', () => {
+        own.hidden = sel.value !== 'custom';
+        p.link = sel.value === 'custom' ? inp.value.trim() : sel.value;
+        if (!own.hidden) inp.focus();
+        touch();
+      });
+      inp.addEventListener('input', () => { p.link = inp.value.trim(); touch(); });
+      wrap.append(f, own);
+      return wrap;
+    };
+
+    grid.append(
+      line('from', 'Показывать с', 'date', 'Пусто — с сегодняшнего дня.'),
+      line('to', 'По какое число', 'date', 'Пусто — пока не выключите.'),
+      linkField()
+    );
+    body.append(grid);
+
+    /* --- три языка --- */
+    const tabs = el('div', 'tabs');
+    const panes = [];
+
+    /* Незаполненный язык — не мелочь: на нём окно просто не покажется, и
+       увидеть это по трём вкладкам нельзя, поэтому сказано словами. */
+    const gaps = el('small', 'card__gaps');
+    const paintGaps = () => {
+      const missing = LANGS.filter(([c]) => !((p.text[c] || {}).title || '').trim()).map(([, n]) => n);
+      gaps.className = 'card__gaps' + (missing.length ? ' is-warn' : '');
+      gaps.textContent = missing.length === LANGS.length
+        ? 'Заголовок не заполнен ни на одном языке — окно не покажется нигде.'
+        : missing.length
+          ? 'Без заголовка: ' + missing.join(', ') + ' — на этих языках окно не покажется.'
+          : 'Все три языка заполнены.';
+    };
+    LANGS.forEach(([code, name], n) => {
+      const t = el('button', null);
+      t.type = 'button';
+      t.setAttribute('aria-selected', String(n === 0));
+      t.append(document.createTextNode(name));
+      /* Точка у языка, который ещё не заполнен: три поля легко пролистать
+         мимо, а посетитель на этом языке увидит чужой текст. */
+      if (!(p.text[code] || {}).title) t.append(el('span', 'dot', ' •'));
+      tabs.append(t);
+
+      const pane = el('div', 'pane');
+      pane.hidden = n !== 0;
+      FIELDS.forEach(([key, title, ph, kind, hint]) => {
+        const f = el('label', 'f');
+        f.style.marginTop = '14px';
+        f.append(el('span', 'mono', title));
+        const inp = el(kind === 'textarea' ? 'textarea' : 'input');
+        if (ph) inp.placeholder = ph;
+        p.text[code] = p.text[code] || { tag: '', title: '', body: '', cta: '' };
+        inp.value = p.text[code][key] || '';
+        inp.addEventListener('input', () => {
+          p.text[code][key] = inp.value;
+          /* Тронули перевод руками — он больше не мой, и я его не перепишу. */
+          if (p.mt) delete p.mt[code];
+          if (key === 'title') {
+            t.textContent = name;
+            if (!inp.value.trim()) t.append(el('span', 'dot', ' •'));
+            paintGaps();
+          }
+          touch();
+        });
+        f.append(inp, el('small', null, hint));
+        pane.append(f);
+      });
+      panes.push(pane);
+
+      t.addEventListener('click', () => {
+        [...tabs.children].forEach((b, k) => b.setAttribute('aria-selected', String(k === n)));
+        panes.forEach((x, k) => { x.hidden = k !== n; });
+      });
+    });
+    paintGaps();
+    body.append(tabs, ...panes, gaps);
+
+    const frame = el('iframe', 'prev');
+    frame.hidden = true;
+    frame.title = 'Предпросмотр окна';
+    frame.loading = 'lazy';
+    body.append(frame);
+
+    box.append(top, body);
+    return box;
+  }
+
+  const confirmDelete = p => {
+    const name = (p.text.ru || {}).title || (p.text.en || {}).title || 'без названия';
+    return window.confirm('Удалить акцию «' + name + '»?');
+  };
+
+  const move = (i, d) => {
+    const to = i + d;
+    if (to < 0 || to >= doc.promos.length) return;
+    const [x] = doc.promos.splice(i, 1);
+    doc.promos.splice(to, 0, x);
+    touch();
+    render();
+  };
+
+  /* ------------------------------------------------ предпросмотр
+     Окно рисуется теми же классами и тем же site.css, что и на сайте, —
+     внутри iframe, чтобы стили сайта не перекрасили саму панель. Ссылки и
+     картинки приводятся к полному адресу: внутри iframe относительный путь
+     считался бы от папки admin/, а не от корня сайта. */
+  function preview(p, box) {
+    const frame = box.querySelector('.prev');
+    if (!frame.hidden) { frame.hidden = true; return; }
+
+    const lang = LANGS[[...box.querySelectorAll('.tabs button')]
+      .findIndex(b => b.getAttribute('aria-selected') === 'true')][0];
+    const t = p.text[lang] || {};
+    const esc = s => String(s || '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+    /* Названная страница адреса здесь не имеет — сайт подставляет его сам,
+       по языку посетителя; в предпросмотре важна надпись, а не переход. */
+    const full = s => /^page:/.test(s) ? '#'
+      : /^(https?:|mailto:|tel:)/.test(s) ? s : new URL(s.replace(/^\//, ''), ROOT).href;
+
+
+    const paras = String(t.body || '').split(/\n\s*\n/).filter(s => s.trim())
+      .map(s => '<p>' + esc(s.trim()) + '</p>').join('');
+
+    frame.srcdoc = '<!DOCTYPE html><html lang="' + lang + '"><head><meta charset="UTF-8">' +
+      '<link rel="stylesheet" href="' + (lang === 'ru' ? FONTS.ru : FONTS.latin) + '">' +
+      '<link rel="stylesheet" href="' + CSS + '">' +
+      '<style>body{background:#efe9f3;padding:26px 16px;display:grid;place-items:center;min-height:100vh}' +
+      '.promo{max-height:none;animation:none}</style></head><body>' +
+      '<div class="promo">' +
+        '<div class="promo__in">' +
+          '<button class="promo__x" type="button" aria-label="Закрыть"><svg viewBox="0 0 24 24" aria-hidden="true">' +
+            '<path d="M6 6l12 12M18 6L6 18" stroke="currentColor" fill="none" stroke-width="1.8" stroke-linecap="round"/></svg></button>' +
+          (t.tag ? '<p class="mono promo__tag">' + esc(t.tag) + '</p>' : '') +
+          '<h2>' + esc(t.title || 'Без заголовка — акция не покажется') + '</h2>' +
+          '<div class="promo__body">' + paras + '</div>' +
+          (p.link && t.cta ? '<a class="btn btn--v promo__cta" href="' + esc(full(p.link)) + '">' + esc(t.cta) + '</a>' : '') +
+          '<button class="promo__later" type="button">Не сейчас</button>' +
+        '</div>' +
+      '</div></body></html>';
+
+    frame.hidden = false;
+    /* Высота подгоняется под содержимое: рамка с полосой прокрутки внутри
+       карточки читалась бы как часть окна, которого на сайте нет. */
+    frame.addEventListener('load', () => {
+      try {
+        const h = frame.contentDocument.documentElement.scrollHeight;
+        frame.style.height = Math.max(240, Math.min(h, 720)) + 'px';
+      } catch (err) { frame.style.height = '460px'; }
+    }, { once: true });
+  }
+
+  /* ------------------------------------------------ отрисовка списка */
+  function render() {
+    const list = $('#list');
+    list.textContent = '';
+    if (!doc.promos.length) {
+      list.append(el('div', 'box empty', 'Акций пока нет. Нажмите «Добавить акцию» — окно появится на сайте, как только вы её включите.'));
+      return;
+    }
+    doc.promos.forEach((p, i) => list.append(card(p, i)));
+  }
+
+  /* ------------------------------------------------ загрузка и сохранение */
+  const normalise = raw => {
+    const out = { promos: [] };
+    out.promos = (Array.isArray(raw?.promos) ? raw.promos : []).map((p, i) => {
+      const one = Object.assign(blank(), {
+        mt: (p.mt && typeof p.mt === 'object') ? p.mt : {},
+        id: String(p.id || 'p' + i), active: !!p.active,
+        from: String(p.from || ''), to: String(p.to || ''),
+        link: String(p.link || '')
+      });
+      LANGS.forEach(([c]) => {
+        const t = (p.text || {})[c] || {};
+        one.text[c] = { tag: String(t.tag || ''), title: String(t.title || ''), body: String(t.body || ''), cta: String(t.cta || '') };
+      });
+      return one;
+    });
+    return out;
+  };
+
+  const apply = raw => {
+    doc = normalise(raw);
+    render();
+    live = JSON.parse(JSON.stringify(doc));
+    dirty = false;
+    paintLive();
+  };
+
+  const load = () => fetch(DATA + '?t=' + Date.now(), { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(raw => { apply(raw); say('Акции загружены.'); })
+    .catch(() => {
+      apply({});
+      say('Файл assets/promos.json не найден — начнём с пустого списка.', 'bad');
+    });
+
+  /* Есть ли на хостинге PHP, задан ли пароль и может ли он писать в assets/.
+     Ответ решает, что показать внизу: сохранение или скачивание файла. */
+  const probe = () => fetch('save.php?ping=1', { cache: 'no-store' })
+    .then(r => r.ok ? r.json() : Promise.reject(r.status))
+    .then(info => {
+      if (!info || info.ok !== true) throw new Error('не PHP');
+      php = info;
+      $('#pass').hidden = false;
+      $('#save').hidden = false;
+      const chip = $('#mode');
+      if (!info.configured) {
+        chip.className = 'chip is-warn';
+        chip.lastElementChild.textContent = 'PHP есть, но пароль не задан';
+      } else if (!info.writable) {
+        chip.className = 'chip is-warn';
+        chip.lastElementChild.textContent = 'PHP есть, но нет прав на запись';
+      } else {
+        chip.className = 'chip is-ok';
+        chip.lastElementChild.textContent = 'сохранение на сайт работает';
+      }
+      const saved = sessionStorage.getItem('dobby.admin.pass');
+      if (saved) $('#pass').value = saved;
+    })
+    .catch(() => {
+      php = false;
+      const chip = $('#mode');
+      chip.className = 'chip is-warn';
+      chip.lastElementChild.textContent = 'без PHP — скачивание файла';
+      say('Сохранение прямо на сайт недоступно: скачайте promos.json и загрузите его в папку assets/.');
+    });
+
+  const problems = () => doc.promos
+    .filter(p => p.active && !LANGS.some(([c]) => ((p.text[c] || {}).title || '').trim()))
+    .length;
+
+  const collect = () => doc;
+
+  const save = () => {
+    const pass = $('#pass').value;
+    if (!pass) { say('Введите пароль.', 'bad'); $('#pass').focus(); return; }
+    const bad = problems();
+    if (bad && !window.confirm('Включённых акций без заголовка: ' + bad + '. Они не покажутся на сайте. Всё равно сохранить?')) return;
+
+    const btn = $('#save');
+    btn.disabled = true;
+    post(btn, pass);
+  };
+
+  /* Перед отправкой добираем недостающие языки: акция, написанная только
+     по-русски, иначе просто не покажется английскому и испанскому
+     посетителю — окно всегда говорит на языке страницы. */
+  const post = async (btn, pass) => {
+    try {
+      const filled = [];
+      for (const p of doc.promos) {
+        if (!p.active) continue;
+        filled.push(...await fillGaps(p));
+      }
+      if (filled.length) { render(); say('Перевели на: ' + [...new Set(filled)].join(', ') + '…'); }
+    } catch (err) {
+      say('Перевести не удалось (' + err.message + ') — сохраняем как есть.', 'bad');
+    }
+
+    say('Сохраняем…');
+    return fetch('save.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: pass, doc: collect() })
+    })
+      .then(r => r.json().then(j => ({ ok: r.ok, j })))
+      .then(({ ok, j }) => {
+        if (!ok || !j.ok) throw new Error(j.error || 'не удалось сохранить');
+        dirty = false;
+        live = JSON.parse(JSON.stringify(doc));
+        paintLive();
+        sessionStorage.setItem('dobby.admin.pass', pass);
+        say(onAir(doc)
+          ? 'Сохранено на сайт: акций — ' + j.count + '. Проверьте сайт.'
+          : 'Сохранено, но значка на сайте не будет — включите нужную акцию.',
+          onAir(doc) ? 'ok' : 'bad');
+      })
+      .catch(err => say(String(err.message || err), 'bad'))
+      .finally(() => { btn.disabled = false; });
+  };
+
+  const download = async () => {
+    /* Тот же добор языков, что и при сохранении на сайт: файл, который
+       клиент положит руками, должен быть таким же полным. */
+    try {
+      const filled = [];
+      for (const p of doc.promos) { if (p.active) filled.push(...await fillGaps(p)); }
+      if (filled.length) { render(); say('Перевели на: ' + [...new Set(filled)].join(', ') + '…'); }
+    } catch (err) {
+      say('Перевести не удалось (' + err.message + ') — файл будет без этих языков.', 'bad');
+    }
+
+    const text = JSON.stringify(collect(), null, 2) + '\n';
+    const a = el('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: 'application/json' }));
+    a.download = 'promos.json';
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+    say(onAir(doc)
+      ? 'Файл скачан. Положите его в папку assets/ на хостинге, заменив старый — до этого на сайте старая версия.'
+      : 'Файл скачан, но в нём нет ни одной показываемой акции — включите нужную.',
+      onAir(doc) ? 'ok' : 'bad');
+  };
+
+  /* ------------------------------------------------ обвязка */
+  $('#add').addEventListener('click', () => {
+    const one = blank();
+    /* Включённой — только если место свободно: показывается одна акция, и
+       новая не должна молча выключать ту, что уже работает. */
+    one.active = !doc.promos.some(shows);
+    doc.promos.push(one);
+    touch();
+    render();
+    const last = $('#list').lastElementChild;
+    last.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    last.querySelector('.pane input').focus({ preventScroll: true });
+  });
+  $('#save').addEventListener('click', save);
+  $('#download').addEventListener('click', download);
+  $('#openBtn').addEventListener('click', () => $('#open').click());
+  $('#open').addEventListener('change', e => {
+    const file = e.target.files[0];
+    if (!file) return;
+    file.text().then(text => {
+      try {
+        const was = live;
+        apply(JSON.parse(text));
+        live = was;                        // на сайте всё ещё старое
+        touch();
+        say('Файл открыт. Не забудьте сохранить.', 'ok');
+      } catch (err) {
+        say('Это не похоже на promos.json.', 'bad');
+      }
+      e.target.value = '';
+    });
+  });
+  addEventListener('beforeunload', e => { if (dirty) e.preventDefault(); });
+
+  load();
+  probe();
+})();
+</script>
+</body>
+</html>

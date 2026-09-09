@@ -32,6 +32,15 @@ FONTS = {
     "ru": "https://fonts.googleapis.com/css2?family=Unbounded:wght@600;700;800&family=Onest:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap",
 }
 
+# --- Where the site lives ----------------------------------------------------
+# Nothing in a page depends on this: every link, asset path and hreflang is
+# relative, so the whole site — /admin/ and assets/promos.json with it — can be
+# moved to another domain, or into a subfolder of one, and still work untouched.
+# It is here for the two places that cannot be relative: the record search
+# engines read, and the sender name on the forms. Change it and rebuild.
+SITE_URL = "https://doctordobby.com/"
+SITE_HOST = SITE_URL.split("//")[-1].strip("/")
+
 # --- The one shop, and the two profiles — taken from doctordobby.com ---------
 # Address, coordinates and the two social URLs are the live ones; the map link is
 # name-anchored so phones hand it to the Maps app instead of the browser.
@@ -618,7 +627,7 @@ def relay(subject):
     """
     return f'''<input type="hidden" name="access_key" value="{FORM_KEY}">
         <input type="hidden" name="subject" value="{subject}">
-        <input type="hidden" name="from_name" value="doctordobby.com">
+        <input type="hidden" name="from_name" value="{SITE_HOST}">
         <input class="hp" type="checkbox" name="botcheck" tabindex="-1" autocomplete="off" aria-hidden="true">'''
 
 
@@ -1145,7 +1154,7 @@ def page(lang, key):
   "@context": "https://schema.org",
   "@type": "VeterinaryCare",
   "name": "Dr. Dobby",
-  "url": "https://doctordobby.com/",
+  "url": "{SITE_URL}",
   "telephone": "+34951566125",
   "email": "info@doctordobby.com",
   "address": {{

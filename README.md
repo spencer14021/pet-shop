@@ -27,9 +27,12 @@ ru/  ru/servisy/    ru/zoomagazin/      ru/infrastruktura/ ru/kontakty/
 
 assets/site.css                 all styles
 assets/site.js                  all behaviour, incl. the 3D logo
+assets/promos.json              the promotions, written in the panel
 assets/logo.png                 the original logo, background removed
 assets/dobby-silhouette.svg     the traced doberman on its own
-build/build-pages.py            regenerates all 15 pages from one template
+admin/index.html                the promotions panel, in Russian
+admin/save.php                  its save endpoint, password-guarded
+build/build-pages.py            regenerates all 18 pages from one template
 build/serve.py                  local preview server, no caching
 ```
 
@@ -49,6 +52,63 @@ Two paragraphs are written rather than taken, because the source has none:
 the Russian *Игрушки и аксессуары* description (their CMS shows the oral-hygiene text
 there by mistake), and the Russian contact intro (theirs is a leftover Spanish line).
 The short call-to-action blocks that close each inner page are also mine.
+
+## The promotions panel
+
+`/admin/` is where the client writes the monthly promotion herself, in Russian,
+with all three languages of the text on one card. Everything she writes lands in
+`assets/promos.json`; `site.js` reads that file on every page and builds the window
+from it, so **a new promotion changes no page and needs no rebuild**.
+
+**The window never opens by itself.** A running promotion puts a coin marked `%` in
+the bottom-left corner, opposite the recommendation pill, and an entry in the menu
+after the last page; the window opens when one of them is clicked, as often as it is
+clicked. `?promo` on any address opens it on load — that is how the panel's three
+check links work. There is no picture in it and nothing to time: text, a button, and
+the two ways in.
+
+The panel finds out for itself how it can save, by asking `admin/save.php` on load:
+
+- **PHP on the host** — password field and “Сохранить на сайт”. `save.php` narrows
+  the request to the fields the panel owns, keeps the previous version as
+  `assets/promos.backup.json`, and writes through a temp file and a rename, so a
+  visitor loading the site mid-save gets one whole version or the other.
+  **The password is a constant at the top of `save.php`** and it refuses to write
+  while that constant is still the shipped placeholder.
+- **No PHP** — the panel says so and switches to “Скачать promos.json”, which the
+  client uploads to `assets/` with a file manager. Nothing else changes.
+
+`build/serve.py` answers the same endpoint locally, reading the password out of
+`save.php`, so the whole round trip can be tried here before anything is uploaded.
+
+The coin is stacked discs turned with CSS 3D rather than the hero's WebGPU pipeline,
+which is loaded on the home page alone — a 44px badge on all eighteen pages is no
+reason to ship a renderer.
+
+**The window only ever speaks the language of the page it is on.** A promotion
+written in Russian and shown to an English reader cannot be acted on, so a language
+that has no title stays quiet — and to keep that from meaning "no promotion for the
+other two", the panel fills the empty languages by machine translation
+(`api.mymemory.translated.net`, free, no key) when the client saves, or on the
+card's «Перевести» button. The translation lands in the fields for her to correct,
+and all three languages are stored in `promos.json`: the site itself translates
+nothing and depends on no service at runtime. If the service is down, the panel says
+so and saves what there is.
+
+The CTA button is picked from the site's own pages by name (`page:contact`) rather
+than by path: one promotion serves all three languages, and `site.js` fills in
+`ru/kontakty/` or `es/contacto/` from the page it is building the window on. That
+list is `PAGES` in `site.js` — the same six pages as `PATHS` here, and renaming a
+page means renaming it in both.
+
+## Moving the site to another domain
+
+Copy the folder. Nothing in a page, in the panel or in `promos.json` carries a
+domain: every link, asset path, `hreflang` and the panel's own data path is worked
+out relative to the file asking for it, so the site runs the same at a new domain
+or from a subfolder of one (`example.com/dobby/`). The single exception is
+`SITE_URL` in `build/build-pages.py`, which feeds the structured-data record and
+the sender name on the forms — change it and rebuild.
 
 ## Editing text
 

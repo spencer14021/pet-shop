@@ -20,7 +20,10 @@
       mailReady: a => `Your mail app is opening with the whole message already written to ${a}. It is on your clipboard as well — nothing here is lost.`,
       mailOnly: a => `Your mail app is opening with the whole message already written to ${a}. If nothing opened, copy the text and send it to that address.`,
       tooMany: n => `Up to ${n} photos, please.`,
-      tooBig: mb => `Each photo has to be under ${mb} MB.`
+      tooBig: mb => `Each photo has to be under ${mb} MB.`,
+      promoClose: 'Close',
+      promoLater: 'Not now',
+      promoPill: 'This month’s offer'
     },
     es: {
       open: h => `Abierto ahora <b>· hasta las ${h}</b>`,
@@ -35,7 +38,10 @@
       mailReady: a => `Se está abriendo tu correo con el mensaje entero ya escrito a ${a}. También lo tienes en el portapapeles — aquí no se pierde nada.`,
       mailOnly: a => `Se está abriendo tu correo con el mensaje entero ya escrito a ${a}. Si no se abre nada, copia el texto y envíalo a esa dirección.`,
       tooMany: n => `Máximo ${n} fotos, por favor.`,
-      tooBig: mb => `Cada foto tiene que pesar menos de ${mb} MB.`
+      tooBig: mb => `Cada foto tiene que pesar menos de ${mb} MB.`,
+      promoClose: 'Cerrar',
+      promoLater: 'Ahora no',
+      promoPill: 'La promoción del mes'
     },
     ru: {
       open: h => `Открыто <b>· до ${h}</b>`,
@@ -50,7 +56,10 @@
       mailReady: a => `Открываем вашу почту — письмо на ${a} уже написано целиком. Текст скопирован и в буфер обмена, здесь ничего не потеряется.`,
       mailOnly: a => `Открываем вашу почту — письмо на ${a} уже написано целиком. Если ничего не открылось, скопируйте текст и отправьте его на этот адрес.`,
       tooMany: n => `Не больше ${n} фото, пожалуйста.`,
-      tooBig: mb => `Каждое фото должно быть меньше ${mb} МБ.`
+      tooBig: mb => `Каждое фото должно быть меньше ${mb} МБ.`,
+      promoClose: 'Закрыть',
+      promoLater: 'Не сейчас',
+      promoPill: 'Акция месяца'
     }
   }[LANG] || {};
 
@@ -327,6 +336,247 @@
         }
       });
     }
+  }
+
+  /* ============================================================
+     THE PROMOTION WINDOW
+     Content comes from assets/promos.json, which the client writes herself
+     in /admin/. Nothing about a promotion is compiled into the pages, so a
+     new one is a saved file and no rebuild.
+
+     Where that file is, is worked out from this script's own URL and never
+     from the domain — so the site, the panel and the data can be moved to
+     another host, or into a subfolder of one, and still find each other.
+     ============================================================ */
+  {
+    /* Read while the script is still running: `currentScript` is only this
+       file for as long as the synchronous pass lasts. */
+    const HERE = (document.currentScript || {}).src || '';
+    const ROOT = new URL(HERE ? '../' : './', HERE || location.href);
+
+    /* Dates are compared in the clinic's own timezone, the way the opening
+       hours above are: a promotion that runs "until the 30th" ends when the
+       shop's day does, not when a visitor's laptop clock says so. */
+    const today = () => new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit'
+    }).format(new Date());
+
+    /* Empty from/to means unbounded, so a promotion with neither runs until
+       it is switched off. Both ends are inclusive — ISO dates sort as text. */
+    const running = (p, day) => p.active !== false &&
+      (!p.from || p.from <= day) && (!p.to || p.to >= day);
+
+    /* Only ever this page's own language. A promotion written in Russian and
+       shown to an English reader is worse than no promotion at all — they
+       cannot act on it, and it reads as a broken site. So a language that
+       has not been written stays quiet, and the panel says plainly which
+       ones those are. A later promotion in the list that does have this
+       language takes the slot instead. */
+    const pickText = p => {
+      const t = (p.text || {})[LANG];
+      return t && (t.title || '').trim() ? t : null;
+    };
+
+    /* Where the button goes. The panel offers the site's own pages by name —
+       `page:contact` — rather than a path, because one promotion serves all
+       three languages and a Russian reader sent to /contact/ would land on
+       the English page. The language is filled in here, at the moment the
+       window is built, from the page it is being built on.
+
+       These are the same six pages as PATHS in build/build-pages.py; a page
+       renamed there has to be renamed here too. Anything else the panel
+       lets through — a WhatsApp link, an address elsewhere on the site — is
+       taken as written, and a path is still read from the site root, which
+       is what lets the same promos.json work on any domain or subfolder. */
+    const PAGES = {
+      home:          { en: '',              es: 'es/',                 ru: 'ru/' },
+      services:      { en: 'services/',     es: 'es/servicios/',       ru: 'ru/servisy/' },
+      petshop:       { en: 'pet-shop/',     es: 'es/tienda-mascota/',  ru: 'ru/zoomagazin/' },
+      installations: { en: 'installations/', es: 'es/instalaciones/',  ru: 'ru/infrastruktura/' },
+      contact:       { en: 'contact/',      es: 'es/contacto/',        ru: 'ru/kontakty/' },
+      partnership:   { en: 'partnership/',  es: 'es/colaboraciones/',  ru: 'ru/partnerstvo/' }
+    };
+    const url = s => {
+      const named = /^page:(.+)$/.exec(s);
+      if (named) {
+        const set = PAGES[named[1]];
+        return new URL(set ? (set[LANG] != null ? set[LANG] : set.en) : '', ROOT).href;
+      }
+      return /^(https?:|mailto:|tel:|\/)/.test(s) ? s : new URL(s, ROOT).href;
+    };
+
+    /* The window never opens by itself: the badge below is the way in, and a
+       promotion the reader did not ask for is not worth taking the page over
+       for. `?promo` on the address opens it on load all the same — that is
+       how the panel checks what has been written. */
+    const forced = /[?&]promo(=|&|$)/.test(location.search);
+
+    const build = (p, txt) => {
+      const dlg = document.createElement('dialog');
+      dlg.className = 'promo';
+      dlg.innerHTML = `
+        <div class="promo__in">
+          <button class="promo__x" type="button" aria-label="${T.promoClose}"><svg aria-hidden="true"><use href="#i-close"/></svg></button>
+          <p class="mono promo__tag" hidden></p>
+          <h2></h2>
+          <div class="promo__body"></div>
+          <a class="btn btn--v promo__cta" hidden></a>
+          <button class="promo__later" type="button"></button>
+        </div>`;
+
+      /* Everything the client typed goes in as text, never as markup — the
+         panel is a text editor, not an HTML one, and a stray < in a price
+         should read as a stray <. Blank lines become paragraphs. */
+      const q = s => dlg.querySelector(s);
+      if (txt.tag) { q('.promo__tag').textContent = txt.tag; q('.promo__tag').hidden = false; }
+      q('h2').textContent = txt.title;
+      (txt.body || '').split(/\n\s*\n/).filter(s => s.trim()).forEach(para => {
+        const el = document.createElement('p');
+        el.textContent = para.trim();
+        q('.promo__body').appendChild(el);
+      });
+
+      if (p.link && txt.cta) {
+        const cta = q('.promo__cta');
+        cta.textContent = txt.cta;
+        cta.href = url(p.link);
+        if (/^https?:/.test(p.link) && new URL(cta.href).origin !== ROOT.origin) {
+          cta.target = '_blank';
+          cta.rel = 'noopener';
+        }
+        cta.hidden = false;
+      }
+      q('.promo__later').textContent = T.promoLater;
+
+      /* Tidying up is done here rather than in the `close` handler alone: a
+         dialog closed by `close()` does not report the event everywhere, and
+         a page left scroll-locked around an invisible window is the worst of
+         the failures available. Every route in calls this, it runs once, and
+         `cancel` covers the Escape key in browsers that skip `close`. */
+      let gone = false;
+      const finish = () => {
+        if (gone) return;
+        gone = true;
+        /* Closed before it is removed, always. A modal taken out of the
+           document while it is still open leaves the browser holding the
+           page inert behind a window that is no longer there — which reads
+           as the whole site freezing: nothing scrolls, nothing clicks. The
+           Escape key arrives here through `cancel`, before the browser has
+           closed anything, so this is the one path where it matters. */
+        if (dlg.open) dlg.close();
+        document.documentElement.classList.remove('is-locked');
+        dlg.remove();
+      };
+      const shut = () => finish();
+
+      q('.promo__x').addEventListener('click', shut);
+      q('.promo__later').addEventListener('click', shut);
+      /* Outside the card closes it too. The card is the only child that
+         paints, so a click landing on the dialog itself is a click on the
+         backdrop — which `::backdrop` never reports on its own. */
+      dlg.addEventListener('click', e => { if (e.target === dlg) shut(); });
+      dlg.addEventListener('close', finish);
+      dlg.addEventListener('cancel', finish);
+
+      document.body.appendChild(dlg);
+      document.documentElement.classList.add('is-locked');
+      dlg.showModal();
+      /* The button under the caret when a window opens by itself is the
+         wrong thing to have highlighted — showModal focuses the first
+         control, so hand it to the card and let the tab order start there. */
+      dlg.querySelector('.promo__in').setAttribute('tabindex', '-1');
+      dlg.querySelector('.promo__in').focus({ preventScroll: true });
+    };
+
+    /* The way back in. The window shows itself once and then stays out of
+       the way, but a visitor who waved it off and then wondered what the
+       offer was has nowhere to go — so the offer keeps a door of its own,
+       in the corner opposite the recommendation pill.
+
+       The mark is a coin, built out of stacked discs and turned with CSS 3D
+       rather than the WebGPU pipeline the hero uses: that machinery is
+       loaded on the home page alone, and a 44px badge on all eighteen pages
+       is not worth shipping a renderer for. */
+    const COIN_LAYERS = 9;
+    const pillFor = (p, txt) => {
+      const btn = document.createElement('button');
+      btn.className = 'promo-pill';
+      btn.type = 'button';
+      btn.id = 'promoPill';
+      /* The badge speaks the language of the page it sits on. The window
+         itself may fall back to whichever language the client filled in —
+         an offer in the wrong language still beats an empty window — but a
+         Russian caption in the English menu is just a mistake, so here the
+         wording is only ever this page's own, or ours. */
+      const own = (p.text || {})[LANG] || {};
+      const caption = (own.tag || '').trim() || T.promoPill;
+      btn.setAttribute('aria-label', caption);
+      btn.title = (own.title || '').trim() || caption;
+
+      const coin = document.createElement('span');
+      coin.className = 'promo-pill__coin';
+      coin.setAttribute('aria-hidden', 'true');
+      /* The rim: thin discs stacked through the coin's depth, so the edge is
+         solid however far round it has turned. */
+      for (let i = 0; i < COIN_LAYERS; i++) {
+        const layer = document.createElement('span');
+        layer.className = 'promo-pill__edge';
+        layer.style.transform = `translateZ(${(i / (COIN_LAYERS - 1) - 0.5) * 6}px)`;
+        coin.appendChild(layer);
+      }
+      ['', ' promo-pill__face--back'].forEach(back => {
+        const face = document.createElement('span');
+        face.className = 'promo-pill__face' + back;
+        face.textContent = '%';
+        coin.appendChild(face);
+      });
+
+      btn.appendChild(coin);
+      open_(btn, p, txt);
+      document.body.appendChild(btn);
+
+      /* And once more in the menu, after the last page, where somebody
+         reading the navigation cannot miss it. The coin is minted again
+         rather than moved: the corner badge stays where it is. */
+      const inNav = document.createElement('button');
+      inNav.className = 'nav__promo';
+      inNav.type = 'button';
+      const label = document.createElement('span');
+      label.className = 'nav__promo__t';
+      label.textContent = caption;
+      inNav.append(coin.cloneNode(true), label);
+      inNav.title = btn.title;
+      open_(inNav, p, txt);
+      const menu = document.getElementById('nav');
+      const langs = menu && menu.querySelector('.nav__lang');
+      if (menu) menu.insertBefore(inNav, langs);
+    };
+
+    /* One door, two handles. The menu shuts behind it on a phone, where the
+       window would otherwise open underneath the open menu. */
+    const open_ = (btn, p, txt) => btn.addEventListener('click', () => {
+      if (nav) nav.classList.remove('is-open');
+      if (burger) burger.setAttribute('aria-expanded', 'false');
+      if (document.querySelector('dialog.promo')) return;   // already up
+      build(p, txt);
+    });
+
+    /* `no-cache` rather than a cache-buster: the file is revalidated on every
+       page load, so an edit made in the panel is live at once, but an
+       unchanged file still comes back as a 304 and costs nothing. */
+    fetch(new URL('assets/promos.json', ROOT).href, { cache: 'no-cache' })
+      .then(r => r.ok ? r.json() : Promise.reject(r.status))
+      .then(doc => {
+        const day = today();
+        const p = (doc.promos || []).find(x => running(x, day) && pickText(x));
+        if (!p) return;
+
+        /* An offer that is running puts its badge up — in the corner and in
+           the menu — and waits there to be asked. */
+        pillFor(p, pickText(p));
+        if (forced) build(p, pickText(p));
+      })
+      .catch(err => { /* no file, no promotions — the site is unchanged */ });
   }
 
   /* ============================================================

@@ -110,7 +110,7 @@ button,input,textarea{font:inherit;color:inherit}
 .lang a:hover{color:var(--ink);background:var(--sand)}
 .lang a[aria-current]{background:var(--violet);color:#fff}
 
-.btn{display:inline-flex;align-items:center;gap:10px;border:0;cursor:pointer;text-decoration:none;font-weight:600;border-radius:999px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
+.btn{display:inline-flex;align-items:center;gap:10px;border:0;cursor:pointer;text-decoration:none;font-weight:600;white-space:nowrap;border-radius:999px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),background .25s}
 .btn:active{transform:translateY(1px)}
 .btn--v{background:var(--violet);color:#fff;padding:13px 24px;font-size:15px;box-shadow:0 14px 30px -16px var(--violet-700)}
 .btn--v:hover{background:var(--violet-700);transform:translateY(-2px);box-shadow:0 20px 38px -16px var(--violet-700)}
@@ -486,7 +486,14 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
    than at the 860px the rest of the layout uses; below 1200px the
    gaps close up first, which buys the last stretch.
    ============================================================ */
-@media(max-width:1200px){.nav{gap:20px}}
+@media(max-width:1360px){
+  .nav{gap:22px}
+  /* Монета одна: заголовок акции остаётся в aria-label и в подсказке, а
+     строка меню не начинает переносить кнопку телефона. */
+  .nav__promo__t{display:none}
+  .nav__promo{padding:8px;border-radius:50%}
+}
+@media(max-width:1200px){.nav{gap:18px}}
 @media(max-width:1024px){
   .nav{position:absolute;left:0;right:0;top:100%;flex-direction:column;align-items:stretch;gap:0;
     background:var(--paper);padding:4px var(--pad) 22px;border-bottom:1px solid var(--line);
@@ -772,4 +779,111 @@ footer{background:var(--sand);color:var(--muted);border-top:5px solid var(--peac
 @media(prefers-reduced-motion:reduce){
   .rec__panel{transition:opacity .01s,visibility 0s linear .01s;transform:none}
   .rec[data-open] .rec__panel{transition:opacity .01s,visibility 0s;transform:none}
+}
+
+/* ============================================================
+   PROMOTION WINDOW
+   Written by the client in /admin/, carried in assets/promos.json and
+   built by site.js — no page holds any of it. A real <dialog>, so the
+   focus trap, Escape and the inert page behind it come from the browser.
+   ============================================================ */
+.promo{position:relative;width:min(460px,calc(100vw - 28px));max-height:calc(100dvh - 32px);margin:auto;padding:0;overflow:auto;
+  border:0;border-radius:24px;background:var(--paper);color:var(--ink);
+  box-shadow:0 60px 120px -40px rgba(61,22,104,.55),0 16px 50px -24px rgba(162,78,234,.35)}
+.promo::backdrop{background:rgba(20,16,26,.5);backdrop-filter:blur(3px)}
+.promo[open]{animation:promo-rise .42s var(--ease) both}
+.promo[open]::backdrop{animation:promo-veil .42s var(--ease) both}
+@keyframes promo-rise{from{opacity:0;transform:translateY(18px) scale(.965)}to{opacity:1;transform:none}}
+@keyframes promo-veil{from{opacity:0}to{opacity:1}}
+
+/* The page behind a modal still scrolls under the wheel, which reads as the
+   window sliding about; this pins it for as long as the window is up. */
+html.is-locked{overflow:hidden}
+
+.promo__in{padding:28px 28px 26px}
+.promo__in:focus{outline:none}
+.promo__tag{color:var(--violet-700);padding-right:38px}
+.promo h2{margin-top:8px;padding-right:38px;font-family:var(--disp);font-weight:700;
+  font-size:clamp(22px,3.2vw,27px);letter-spacing:-.02em;line-height:1.12}
+.promo__body p{margin-top:10px;color:var(--muted);font-size:15px;text-wrap:pretty}
+.promo__cta{margin-top:20px;width:100%;justify-content:center}
+/* .btn sets a display of its own, which outranks the browser's [hidden] */
+.promo__cta[hidden]{display:none}
+.promo__later{display:block;margin:14px auto 0;padding:4px 8px;background:none;border:0;cursor:pointer;
+  color:var(--muted);font-size:13.5px;text-decoration:underline;text-underline-offset:3px}
+.promo__later:hover{color:var(--ink)}
+
+/* Anchored to the window rather than to the text, and pinned to the box, so
+   a long promotion scrolls beneath it. */
+.promo__x{position:absolute;top:14px;right:14px;display:grid;place-items:center;width:34px;height:34px;
+  cursor:pointer;border:0;border-radius:50%;background:var(--paper);color:var(--muted);
+  box-shadow:0 6px 18px -10px rgba(20,16,26,.55);
+  transition:background .24s var(--ease),color .24s var(--ease)}
+.promo__x svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round}
+.promo__x:hover{background:var(--violet);color:#fff}
+
+@media(prefers-reduced-motion:reduce){
+  .promo[open],.promo[open]::backdrop{animation-duration:.01s}
+}
+
+/* ------------------------------------------------------------
+   THE WAY BACK IN
+   A coin in the corner opposite the recommendation pill, there for as long
+   as an offer is running: the window shows itself once, this reopens it.
+
+   The coin is a real solid — two faces with a rim of stacked discs between
+   them, turned in CSS 3D. The hero's WebGPU pipeline is loaded on the home
+   page alone and a badge this size is no reason to ship it to the other
+   seventeen.
+   ------------------------------------------------------------ */
+.promo-pill{position:fixed;left:clamp(12px,2.2vw,26px);bottom:clamp(12px,2.2vw,26px);z-index:110;
+  display:grid;place-items:center;width:54px;height:54px;padding:0;cursor:pointer;
+  border:0;border-radius:50%;background:var(--violet);perspective:150px;
+  box-shadow:0 14px 30px -14px var(--violet-700),0 0 0 0 rgba(162,78,234,.5);
+  transition:transform .25s var(--ease),background .25s var(--ease),box-shadow .25s var(--ease)}
+.promo-pill:hover{background:var(--violet-700);transform:translateY(-2px)}
+.promo-pill:focus-visible{outline:2px solid var(--violet-900);outline-offset:3px}
+
+.promo-pill__coin{position:relative;display:block;width:27px;height:27px;
+  transform-style:preserve-3d;transform:rotateX(-14deg);
+  animation:coin-turn 7s linear infinite}
+.promo-pill:hover .promo-pill__coin{animation-duration:2.4s}
+
+/* Faces and rim are all the same disc, moved along the coin's own axis. The
+   rim discs are darker, so the edge reads as a side rather than as a blur. */
+.promo-pill__face,.promo-pill__edge{position:absolute;inset:0;border-radius:50%}
+.promo-pill__edge{background:#d98b4e;transform:translateZ(0)}
+.promo-pill__face{display:grid;place-items:center;backface-visibility:hidden;
+  background:radial-gradient(circle at 32% 28%,#ffd9b3,var(--peach) 62%,#eb9a5f);
+  color:#4a2c12;font-family:var(--disp);font-weight:800;font-size:14px;line-height:1;
+  transform:translateZ(3.4px)}
+.promo-pill__face--back{transform:rotateY(180deg) translateZ(3.4px)}
+
+@keyframes coin-turn{
+  from{transform:rotateX(-14deg) rotateY(0)}
+  to{transform:rotateX(-14deg) rotateY(360deg)}
+}
+
+/* Room for both corners on a narrow screen: the recommendation pill stops
+   short of the coin instead of running under it. */
+@media(max-width:420px){
+  .promo-pill{width:48px;height:48px}
+  .rec{left:72px}
+}
+@media(prefers-reduced-motion:reduce){
+  .promo-pill__coin,.promo-pill:hover .promo-pill__coin{animation:none;transform:rotateX(-14deg) rotateY(-24deg)}
+}
+
+/* The same offer in the menu, after the last page — the coin minted a second
+   time at nav size. On a phone the menu is a stack, so it takes the width. */
+.nav__promo{display:inline-flex;align-items:center;gap:9px;flex:none;cursor:pointer;border:0;
+  padding:7px 15px 7px 8px;border-radius:999px;background:var(--peach-100);color:var(--violet-900);
+  font:inherit;font-weight:600;font-size:14px;perspective:150px;white-space:nowrap;
+  transition:background .25s var(--ease),transform .25s var(--ease)}
+.nav__promo:hover{background:var(--peach-300);transform:translateY(-1px)}
+.nav__promo .promo-pill__coin{width:20px;height:20px}
+.nav__promo .promo-pill__face{font-size:11px}
+@media(max-width:1020px){
+  .nav__promo{width:100%;justify-content:center;margin-top:16px;padding:12px 18px;border-radius:999px;font-size:16px}
+  .nav__promo__t{display:inline}
 }
