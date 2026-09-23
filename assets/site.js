@@ -811,8 +811,10 @@
      so smoothing it as-is would round the dense parts and miss the
      corners — then run a short moving average around the loop. Every
      corner picks up a radius; the silhouette keeps its proportions.
-     RADIUS is a fraction of the dog's longest side, so it scales. */
-  function roundPoly(poly, RADIUS = 0.010, PASSES = 2) {
+     RADIUS is a fraction of the dog's longest side, so it scales. It is
+     set so no point survives anywhere — ear tips, tail, paws — while the
+     two ears still read as two; much above 0.02 they melt into one. */
+  function roundPoly(poly, RADIUS = 0.020, PASSES = 3) {
     const n = poly.length;
     if (n < 8) return poly;
 
