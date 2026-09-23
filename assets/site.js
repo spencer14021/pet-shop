@@ -812,9 +812,12 @@
      corners — then run a short moving average around the loop. Every
      corner picks up a radius; the silhouette keeps its proportions.
      RADIUS is a fraction of the dog's longest side, so it scales. It is
-     set so no point survives anywhere — ear tips, tail, paws — while the
-     two ears still read as two; much above 0.02 they melt into one. */
-  function roundPoly(poly, RADIUS = 0.020, PASSES = 3) {
+     set so no point survives on the body — tail, hocks, paws.
+     The head is the exception: the upright pointed ears and the long muzzle
+     are what make it a doberman, so the top-front corner of the shape —
+     where the head is — gets only HEAD_RADIUS, blended into the body's
+     radius across the neck so no kink marks the change. */
+  function roundPoly(poly, RADIUS = 0.020, PASSES = 3, HEAD_RADIUS = 0.002) {
     const n = poly.length;
     if (n < 8) return poly;
 
@@ -844,18 +847,26 @@
 
     const M = pts.length;
     if (M < 16) return poly;
-    const k = Math.max(1, Math.round(RADIUS * size / step));
-    const win = 2 * k + 1;
+    const W = maxX - minX, H = maxY - minY;
+    const ramp = v => v <= 0 ? 0 : v >= 1 ? 1 : v * v * (3 - 2 * v);
+    const kOf = r => Math.max(1, Math.round(r * size / step));
+    const ks = new Int32Array(M);
+    for (let i = 0; i < M; i++) {
+      const [x, y] = pts[i];
+      const head = ramp((minX + W * 0.30 - x) / (W * 0.07)) * ramp((minY + H * 0.27 - y) / (H * 0.07));
+      ks[i] = Math.round(kOf(RADIUS) + (kOf(HEAD_RADIUS) - kOf(RADIUS)) * head);
+    }
     let src = pts;
     for (let p = 0; p < PASSES; p++) {
       const out = new Array(M);
       for (let i = 0; i < M; i++) {
+        const k = ks[i];
         let sx = 0, sy = 0;
         for (let j = -k; j <= k; j++) {
           const q = src[((i + j) % M + M) % M];
           sx += q[0]; sy += q[1];
         }
-        out[i] = [sx / win, sy / win];
+        out[i] = [sx / (2 * k + 1), sy / (2 * k + 1)];
       }
       src = out;
     }
@@ -962,13 +973,6 @@
     }
 
     // field gradient → analytic normals
-    const gx = new Float32Array(gn), gy = new Float32Array(gn);
-    for (let jy = 0; jy < gh; jy++) for (let ix = 0; ix < gw; ix++) {
-      const i0 = ix > 0 ? ix - 1 : 0, i1 = ix < gw - 1 ? ix + 1 : gw - 1;
-      const j0 = jy > 0 ? jy - 1 : 0, j1 = jy < gh - 1 ? jy + 1 : gh - 1;
-      gx[jy * gw + ix] = (dist[jy * gw + i1] - dist[jy * gw + i0]) / ((i1 - i0) * dx);
-      gy[jy * gw + ix] = (dist[j1 * gw + ix] - dist[j0 * gw + ix]) / ((j1 - j0) * dy);
-    }
     const tmp = new Float32Array(gn);
     const blur = arr => {
       for (let jy = 0; jy < gh; jy++) {
@@ -985,7 +989,17 @@
         for (let ix = 0; ix < gw; ix++) arr[row + ix] = (tmp[up + ix] + tmp[row + ix] + tmp[dn + ix]) / 3;
       }
     };
-    blur(gx); blur(gy); blur(gx); blur(gy);
+    const gradOf = field => {
+      const gx = new Float32Array(gn), gy = new Float32Array(gn);
+      for (let jy = 0; jy < gh; jy++) for (let ix = 0; ix < gw; ix++) {
+        const i0 = ix > 0 ? ix - 1 : 0, i1 = ix < gw - 1 ? ix + 1 : gw - 1;
+        const j0 = jy > 0 ? jy - 1 : 0, j1 = jy < gh - 1 ? jy + 1 : gh - 1;
+        gx[jy * gw + ix] = (field[jy * gw + i1] - field[jy * gw + i0]) / ((i1 - i0) * dx);
+        gy[jy * gw + ix] = (field[j1 * gw + ix] - field[j0 * gw + ix]) / ((j1 - j0) * dy);
+      }
+      blur(gx); blur(gy); blur(gx); blur(gy);
+      return [gx, gy];
+    };
 
     /* --- where do the legs leave the body? the first line below the chest
            that cuts two spans, both already leg-narrow --- */
@@ -996,12 +1010,29 @@
     }
     const legWindows = crossings(cutY).map(([a, b]) => [a - 2, b + 2]);
     const legTopY = cutY - 14;                    // legs run up inside the torso
-    const cutRow = Math.min(ny, Math.max(0, Math.round((cutY - y0) / dy)));
-    const legTopRow = Math.min(ny, Math.max(0, Math.round((legTopY - y0) / dy)));
-    const legCol = new Uint8Array(gw);            // which columns a leg may occupy
-    for (let ix = 0; ix < gw; ix++) {
-      const px = x0 + ix * dx;
-      legCol[ix] = legWindows.some(([a, b]) => px >= a && px <= b) ? 1 : 0;
+
+    /* Each part gets its own field: the outline's distance, intersected with
+       the line it is cut along through a smooth minimum. A straight cut
+       would leave a flat face with a hard rim — and once the legs sit out on
+       the flanks and the dog turns, the top of the hind leg shows as a step
+       under the tail. Rounded off, the part ends in a cap that melts into
+       the other one instead. */
+    const SOFT = 4;
+    const smin = (a, b) => {
+      const hh = Math.max(SOFT - Math.abs(a - b), 0) / SOFT;
+      return Math.min(a, b) - hh * hh * SOFT / 4;
+    };
+    const torsoField = new Float32Array(gn), legField = new Float32Array(gn);
+    for (let jy = 0; jy < gh; jy++) {
+      const py = y0 + jy * dy;
+      for (let ix = 0; ix < gw; ix++) {
+        const px = x0 + ix * dx, i = jy * gw + ix;
+        let side = -Infinity;                     // signed distance to the nearest leg window,
+        for (const [a, b] of legWindows) side = Math.max(side, Math.min(px - a, b - px));
+        side = Math.max(side, py - cutY);         // which only holds inside the torso
+        torsoField[i] = smin(dist[i], cutY - py);
+        legField[i] = smin(dist[i], smin(py - legTopY, side));
+      }
     }
 
     let dmax = 0, legMax = 0;
@@ -1031,7 +1062,8 @@
 
     /* --- mesh one part: clip every cell against d ≥ 0 and the part's own
            mask, then emit a front and a back shell --- */
-    function emit(rowFrom, rowTo, maskUntilRow, R, D) {
+    function emit(field, R, D) {
+      const [gx, gy] = gradOf(field);
       let pos = new Float32Array(1 << 15), nor = new Float32Array(1 << 15), pn = 0;
       let idx = new Uint32Array(1 << 15), inl = 0;
       const growV = () => {
@@ -1065,20 +1097,18 @@
       const vF = new Int32Array(8), vB = new Int32Array(8);
       const cN = new Int32Array(4);
 
-      for (let jy = rowFrom; jy < rowTo; jy++) {
-        const columnLimited = jy < maskUntilRow;
+      for (let jy = 0; jy < ny; jy++) {
         for (let ix = 0; ix < nx; ix++) {
-          if (columnLimited && !legCol[ix] && !legCol[ix + 1]) continue;
           cN[0] = jy * gw + ix;
           cN[1] = jy * gw + ix + 1;
           cN[2] = (jy + 1) * gw + ix + 1;
           cN[3] = (jy + 1) * gw + ix;
-          if (dist[cN[0]] < 0 && dist[cN[1]] < 0 && dist[cN[2]] < 0 && dist[cN[3]] < 0) continue;
+          if (field[cN[0]] < 0 && field[cN[1]] < 0 && field[cN[2]] < 0 && field[cN[3]] < 0) continue;
 
           let m = 0;
           for (let k = 0; k < 4; k++) {
             const A = cN[k], Bn = cN[(k + 1) % 4];
-            const dA = dist[A], dB = dist[Bn];
+            const dA = field[A], dB = field[Bn];
             if (dA >= 0) {
               oKind[m] = 0; oKey[m] = A;
               oPx[m] = x0 + (A % gw) * dx; oPy[m] = y0 + ((A / gw) | 0) * dy;
@@ -1129,8 +1159,8 @@
       return { geometry: g, triangles: inl / 3 };
     }
 
-    const torso = emit(0, cutRow, 0, R_BODY, D_BODY);
-    const legs = emit(legTopRow, ny, cutRow, R_LEG, D_LEG);
+    const torso = emit(torsoField, R_BODY, D_BODY);
+    const legs = emit(legField, R_LEG, D_LEG);
 
     return {
       torso: torso.geometry,
